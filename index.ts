@@ -1,1 +1,1 @@
-export { YourWebComponent } from './src/your-webcomponent';
+export { IaDropdown } from './src/ia-dropdown';

@@ -22,7 +22,7 @@ export class IaDropdown extends LitElement {
 
   @property({ type: String, attribute: true }) selectedOption = '';
 
-  @property({ type: String }) dropdownState = 'closed';
+  @property({ type: Boolean, attribute: true }) open = false;
 
   @property({ type: Array }) options = [];
 
@@ -61,20 +61,28 @@ export class IaDropdown extends LitElement {
   }
 
   toggleOptions() {
-    if (this.dropdownState === 'closed') {
-      this.dropdownState = 'open';
+    if (!this.open) {
+      this.open = true;
       return;
     }
 
-    this.dropdownState = 'closed';
+    this.open = false;
   }
 
   get caret(): SVGTemplateResult {
-    if (this.dropdownState === 'closed') {
+    if (!this.open) {
       return this.caretDown;
     }
 
     return this.caretUp;
+  }
+
+  get dropdownState(): string {
+    if (this.open) {
+      return 'open';
+    }
+
+    return 'closed';
   }
 
   get caretUp(): SVGTemplateResult {
@@ -117,6 +125,7 @@ export class IaDropdown extends LitElement {
     svg.caret-up-svg,
     svg.caret-down-svg {
       fill: var(--dropdownTextColor, #fff);
+      vertical-align: middle;
     }
 
     button.click-main {
@@ -168,6 +177,10 @@ export class IaDropdown extends LitElement {
       color: var(--dropdownTextColor, #fff);
       border-radius: 4px;
       border: 1px solid var(--dropdownBorderColor, #fff);
+    }
+
+    ul.dropdown-main {
+      background-color: var(--dropdownHoverBgColor, #fff);
     }
 
     ul.dropdown-main li:hover:not(.selected) {

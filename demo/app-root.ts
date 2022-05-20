@@ -46,28 +46,20 @@ export class AppRoot extends LitElement {
             url: 'https://archive.org/details/inlibrary',
             selectedHandler: (option: optionInterface) =>
               this.onSelected(option),
-            label: html`<p>In Library on Archive.org</p>`,
+            label: html`<p>In library collection on Archive.org</p>`,
             id: 'inlibrary',
           } as optionInterface,
           {
             selectedHandler: (option: optionInterface) =>
               this.onSelected(option),
-            label: html`<p>wheasdfasdfasdfasfdfsee</p>`,
-            id: 'dfasdfasdfasdfasdfasdfsadfdf-whee',
+            label: html`<p>Select this option</p>`,
+            id: 'foo-bar',
           } as optionInterface,
           {
             selectedHandler: (option: optionInterface) =>
               this.onSelected(option),
-            label: html`<p>bacon ipsum bacon ipsum</p>`,
-            id: 'bacon ipsum bacon ipsubacon ipsum bacon ipsu-whee',
-          } as optionInterface,
-          {
-            selectedHandler: (option: optionInterface) =>
-              this.onSelected(option),
-            label: html`<p>
-              hipsters-are-still-idk-whehipsters-are-still-idk-whe
-            </p>`,
-            id: 'hipsters-are-still-idk-where-whee',
+            label: html`<p>Best bet</p>`,
+            id: 'bar-foo',
           } as optionInterface,
         ]}
       >

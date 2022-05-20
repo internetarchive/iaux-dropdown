@@ -11,7 +11,7 @@ import { property, customElement } from 'lit/decorators.js';
 
 export interface optionInterface {
   url?: string;
-  selectedHandler: Function;
+  selectedHandler?: Function;
   label: string | TemplateResult;
   id: string;
 }
@@ -58,7 +58,10 @@ export class IaDropdown extends LitElement {
         detail: { option },
       })
     );
-    option?.selectedHandler(option);
+
+    if (option.selectedHandler) {
+      option?.selectedHandler(option);
+    }
   }
 
   toggleOptions() {
@@ -106,7 +109,9 @@ export class IaDropdown extends LitElement {
         <button @click=${this.toggleOptions} class="click-main">
           <span class="sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
-          ${this.displayCaret ? html`<span>${this.caret}</span>` : nothing}
+          ${this.displayCaret
+            ? html`<span class="caret">${this.caret}</span>`
+            : nothing}
         </button>
 
         <ul class="dropdown-main ${this.dropdownState}">
@@ -188,11 +193,16 @@ export class IaDropdown extends LitElement {
       background-color: var(--dropdownHoverBgColor, #fff);
     }
 
-    ul.dropdown-main li:hover:not(.selected) {
+    ul.dropdown-main li:hover:not(:first-child) {
+      border-top: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
+    }
+    ul.dropdown-main li:hover:not(:last-child) {
+      border-bottom: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
+    }
+
+    ul.dropdown-main li:hover {
       background-color: var(--dropdownHoverBgColor, #fff);
       color: var(--dropdownHoverTextColor, #2c2f2c);
-      border-top-color: var(--dropdownHoverTopBottomBorderColor, #333);
-      border-bottom-color: var(--dropdownHoverTopBottomBorderColor, #333);
       list-style: none;
       cursor: pointer;
     }
@@ -202,6 +212,8 @@ export class IaDropdown extends LitElement {
       list-style: none;
       height: 30px;
       cursor: pointer;
+      border-bottom: 0.5px solid var(--dropdownBgColor, #333);
+      border-top: 0.5px solid var(--dropdownBgColor, #333);
     }
 
     ul.dropdown-main li button {
@@ -219,7 +231,7 @@ export class IaDropdown extends LitElement {
       display: block;
     }
 
-    ul.dropdown-main li a:hover {
+    ul.dropdown-main li:hover a {
       background-color: var(--dropdownHoverBgColor, #fff);
       color: var(--dropdownHoverTextColor, #2c2f2c);
     }

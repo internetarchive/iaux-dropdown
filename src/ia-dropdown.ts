@@ -109,7 +109,7 @@ export class IaDropdown extends LitElement {
     return html`
       <div class="ia-dropdown-group">
         <button @click=${this.toggleOptions} class="click-main">
-          <span class="sr-only">Toggle ${this.optionGroup}</span>
+          <span class="cta sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
           ${this.displayCaret
             ? html`<span class="caret">${this.caret}</span>`

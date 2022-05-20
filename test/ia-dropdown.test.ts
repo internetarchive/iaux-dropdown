@@ -41,6 +41,7 @@ describe('IaDropdown', () => {
 
     expect(caret?.querySelector('.caret-down-svg')).to.not.exist;
     expect(caret?.querySelector('.caret-up-svg')).to.exist;
+    expect(el.open).to.be.true;
   });
 
   describe('Options', () => {
@@ -85,6 +86,18 @@ describe('IaDropdown', () => {
       await el.updateComplete;
       expect(optionCallbackReceived).to.be.true;
       expect(el.selectedOption).to.equal('callback-example');
+    });
+    it('can set `optionGroup` namespace', async () => {
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown .optionGroup=${'foobarz'}></ia-dropdown>`
+      );
+
+      expect(el.optionGroup).to.equal('foobarz');
+
+      const srOnlyCTA = el.shadowRoot?.querySelector(
+        'button.click-main span.cta.sr-only'
+      );
+      expect(srOnlyCTA?.innerHTML).to.contain('foobarz');
     });
   });
 });

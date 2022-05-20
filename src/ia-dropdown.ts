@@ -195,6 +195,13 @@ export class IaDropdown extends LitElement {
       background-color: var(--dropdownHoverBgColor, #fff);
     }
 
+    ul.dropdown-main li:hover:first-child {
+      border-top-color: var(--dropdownHoverBgColor, #fff);
+    }
+    ul.dropdown-main li:hover:last-child {
+      border-bottom-color: var(--dropdownHoverBgColor, #fff);
+    }
+
     ul.dropdown-main li:hover:not(:first-child) {
       border-top: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
     }
@@ -239,13 +246,11 @@ export class IaDropdown extends LitElement {
     }
 
     ul.dropdown-main li:first-child {
-      border-top: none;
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
     }
 
     ul.dropdown-main li:last-child {
-      border-bottom: none;
       border-bottom-right-radius: 4px;
       border-bottom-left-radius: 4px;
     }

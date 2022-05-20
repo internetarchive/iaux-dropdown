@@ -1,40 +1,90 @@
-// import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect } from '@open-wc/testing';
 
-// import type { YourWebComponent } from '../src/your-webcomponent';
-// import '../src/your-webcomponent';
+import type { IaDropdown, optionInterface } from '../src/ia-dropdown';
+import '../src/ia-dropdown';
 
-// describe('YourWebComponent', () => {
-//   it('has a default title "Hey there" and counter 5', async () => {
-//     const el = await fixture<YourWebComponent>(
-//       html`<your-webcomponent></your-webcomponent>`
-//     );
+describe('IaDropdown', () => {
+  it('is closed at default', async () => {
+    const el = await fixture<IaDropdown>(html`<ia-dropdown></ia-dropdown>`);
+    expect(el.open).to.be.false;
+  });
 
-//     expect(el.title).to.equal('Hey there');
-//     expect(el.counter).to.equal(5);
-//   });
+  it('can display caret as option', async () => {
+    const el = await fixture<IaDropdown>(html`<ia-dropdown></ia-dropdown>`);
+    expect(el.displayCaret).to.be.false;
 
-//   it('increases the counter on button click', async () => {
-//     const el = await fixture<YourWebComponent>(
-//       html`<your-webcomponent></your-webcomponent>`
-//     );
-//     el.shadowRoot!.querySelector('button')!.click();
+    el.displayCaret = true;
+    await el.updateComplete;
 
-//     expect(el.counter).to.equal(6);
-//   });
+    expect(el.displayCaret).to.be.true;
 
-//   it('can override the title via attribute', async () => {
-//     const el = await fixture<YourWebComponent>(
-//       html`<your-webcomponent title="attribute title"></your-webcomponent>`
-//     );
+    const caret = el.shadowRoot?.querySelector('span.caret');
+    expect(caret).to.exist;
+  });
 
-//     expect(el.title).to.equal('attribute title');
-//   });
+  it('caret, when displayed, changes to point up when dropdown is opened', async () => {
+    const el = await fixture<IaDropdown>(
+      html`<ia-dropdown displayCaret></ia-dropdown>`
+    );
 
-//   it('passes the a11y audit', async () => {
-//     const el = await fixture<YourWebComponent>(
-//       html`<your-webcomponent></your-webcomponent>`
-//     );
+    expect(el.displayCaret).to.be.true;
+    const caret = el.shadowRoot?.querySelector('span.caret');
+    expect(caret?.querySelector('.caret-down-svg')).to.exist;
+    expect(caret?.querySelector('.caret-up-svg')).to.not.exist;
 
-//     await expect(el).shadowDom.to.be.accessible();
-//   });
-// });
+    const trigger = el.shadowRoot?.querySelector('button.click-main');
+    expect(trigger).to.exist;
+
+    (trigger as any)?.click(); // TS barks but `click()` is alegit test fn
+
+    await el.updateComplete;
+
+    expect(caret?.querySelector('.caret-down-svg')).to.not.exist;
+    expect(caret?.querySelector('.caret-up-svg')).to.exist;
+  });
+
+  describe('Options', () => {
+    it('receives a list of options', async () => {
+      let optionCallbackReceived = false;
+      const options: optionInterface[] = [
+        {
+          selectedHandler: () => {
+            optionCallbackReceived = true;
+          },
+          label: 'beep',
+          id: 'callback-example',
+        },
+        {
+          url: 'archive.org',
+          label: html`<p class="foo">foo</p>`,
+          id: 'link-example',
+        },
+      ];
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown .options=${options}></ia-dropdown>`
+      );
+
+      expect(optionCallbackReceived).to.be.false;
+      expect(el.options.length).to.equal(2);
+
+      (el.shadowRoot?.querySelector('button.click-main') as any)?.click(); // TS barks but `click()` is alegit test fn
+      await el.updateComplete;
+      expect(el.open).to.be.true;
+
+      const list = el.shadowRoot?.querySelector('ul');
+
+      expect(list).to.exist;
+      expect(list?.querySelectorAll('li').length).to.equal(2);
+
+      const firstOption = list?.querySelector('li');
+      const firstOptionTarget = firstOption?.querySelector('button');
+      expect(firstOptionTarget).to.exist;
+
+      (firstOptionTarget as any).click();
+
+      await el.updateComplete;
+      expect(optionCallbackReceived).to.be.true;
+      expect(el.selectedOption).to.equal('callback-example');
+    });
+  });
+});

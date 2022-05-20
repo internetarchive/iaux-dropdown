@@ -53,6 +53,8 @@ export class IaDropdown extends LitElement {
   }
 
   optionClicked(option: optionInterface): void {
+    this.selectedOption = option.id;
+
     this.dispatchEvent(
       new CustomEvent('optionSelected', {
         detail: { option },

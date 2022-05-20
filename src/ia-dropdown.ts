@@ -18,11 +18,11 @@ export interface optionInterface {
 
 @customElement('ia-dropdown')
 export class IaDropdown extends LitElement {
+  @property({ type: Boolean, attribute: true }) open = false;
+
   @property({ type: Boolean, attribute: true }) displayCaret = false;
 
   @property({ type: String, attribute: true }) selectedOption = '';
-
-  @property({ type: Boolean, attribute: true }) open = false;
 
   @property({ type: Array }) options = [];
 
@@ -58,6 +58,7 @@ export class IaDropdown extends LitElement {
         detail: { option },
       })
     );
+    option?.selectedHandler(option);
   }
 
   toggleOptions() {
@@ -124,7 +125,7 @@ export class IaDropdown extends LitElement {
 
     svg.caret-up-svg,
     svg.caret-down-svg {
-      fill: var(--dropdownTextColor, #fff);
+      fill: var(--dropdownCaretColor, #fff);
       vertical-align: middle;
     }
 
@@ -134,6 +135,12 @@ export class IaDropdown extends LitElement {
       border: none;
       cursor: pointer;
       outline: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-content: center;
+      flex-wrap: nowrap;
+      flex-direction: row;
     }
 
     button slot {
@@ -145,7 +152,6 @@ export class IaDropdown extends LitElement {
       width: inherit;
       height: inherit;
       position: relative;
-      border: 1px solid red;
     }
 
     .sr-only {
@@ -172,7 +178,6 @@ export class IaDropdown extends LitElement {
       position: absolute;
       list-style: none;
       margin: 0px;
-      border: 1px solid green;
       padding: 0;
       color: var(--dropdownTextColor, #fff);
       border-radius: 4px;
@@ -189,7 +194,6 @@ export class IaDropdown extends LitElement {
       border-top-color: var(--dropdownHoverTopBottomBorderColor, #333);
       border-bottom-color: var(--dropdownHoverTopBottomBorderColor, #333);
       list-style: none;
-      height: 30px;
       cursor: pointer;
     }
 
@@ -198,8 +202,6 @@ export class IaDropdown extends LitElement {
       list-style: none;
       height: 30px;
       cursor: pointer;
-      border-top: 0.5px solid transparent;
-      border-bottom: 0.5px solid transparent;
     }
 
     ul.dropdown-main li button {
@@ -215,6 +217,11 @@ export class IaDropdown extends LitElement {
     ul.dropdown-main li a {
       text-decoration: none;
       display: block;
+    }
+
+    ul.dropdown-main li a:hover {
+      background-color: var(--dropdownHoverBgColor, #fff);
+      color: var(--dropdownHoverTextColor, #2c2f2c);
     }
 
     ul.dropdown-main li:first-child {

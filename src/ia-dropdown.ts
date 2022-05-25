@@ -148,6 +148,7 @@ export class IaDropdown extends LitElement {
       align-content: center;
       flex-wrap: nowrap;
       flex-direction: row;
+      padding-left: 0;
     }
 
     button slot {
@@ -184,7 +185,7 @@ export class IaDropdown extends LitElement {
     ul.dropdown-main {
       position: absolute;
       list-style: none;
-      margin: 0px;
+      margin: 5px 0 0 0;
       padding: 0;
       color: var(--dropdownTextColor, #fff);
       border-radius: 4px;
@@ -228,6 +229,10 @@ export class IaDropdown extends LitElement {
       border-top: 0.5px solid var(--dropdownBgColor, #333);
     }
 
+    ul.dropdown-main li > * {
+      padding: 5px 10px;
+    }
+
     ul.dropdown-main li button {
       background: none;
       color: inherit;
@@ -235,12 +240,12 @@ export class IaDropdown extends LitElement {
       font: inherit;
       cursor: pointer;
       outline: inherit;
-      padding: 0;
     }
 
     ul.dropdown-main li a {
       text-decoration: none;
       display: block;
+      box-sizing: border-box;
     }
 
     ul.dropdown-main li:hover a {
@@ -263,24 +268,24 @@ export class IaDropdown extends LitElement {
       color: var(--dropdownSelectedTextColor, #2c2c2c);
     }
 
-    ul.dropdown-main li > * > * {
+    ul.dropdown-main li > * :only-child {
       margin: 0;
-      padding: 0 12px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
       align-content: center;
       flex-wrap: nowrap;
       height: 100%;
+      padding: 5px 10px;
+      box-sizing: border-box;
     }
 
     ul.dropdown-main li > * {
-      display: flex;
       width: 100%;
       height: inherit;
       color: var(--dropdownTextColor, #fff);
       background: transparent;
-      margin: 0;
+      padding: 0;
     }
   `;
 }

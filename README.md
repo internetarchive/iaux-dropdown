@@ -2,15 +2,21 @@
 
 # `<ia-dropdown>` web component
 
-<img src="ia-dropdown-img.png" style="width: 200px"/>
+<img src="ia-dropdown-ex.gif" style="width: 200px"/>
 
 
 ## Usage
-```js
+```ts
+import { optionInterface } from 'src/ia-dropdown';
 const options = [{
   id: 'option-1',
-  selectedHandler: (option) => alert(option.id),
-  label: html`<p>Best option</p>`
+  selectedHandler: (option: optionInterface) => alert(option.id),
+  label: html`
+    <ia-icon-label>
+      <i slot="icon" class="invert-icon-at-hover">?</i>
+      <span>Ask Question</span>
+    </ia-icon-label>
+  `
 }]
 
 <ia-dropdown
@@ -21,8 +27,11 @@ const options = [{
   <p id="custom trigger" slot="dropdown-label">Click me to toggle options</p>
 </ia-dropdown>
 ```
-### CSS vars:
 
+
+
+#### `<ia-dropdown>` CSS
+CSS Vars
 Primary:
 - `var(--dropdownTextColor, #fff)`
 - `var(--dropdownBgColor, #333)`
@@ -37,6 +46,32 @@ Hover:
 - `var(--dropdownHoverBgColor, #fff)`
 - `var(--dropdownHoverTextColor, #2c2f2c)`
 - `var(--dropdownHoverTopBottomBorderColor, #333)`
+
+
+#### `<ia-icon-label>` CSS
+
+Top Level Classes
+- `.invert-icon-at-hover`
+  - applies `filter: invert(1)` to icon in `slot[name='icon']` on label hover
+- `.invert-icon-at-selected`
+- applies `filter: invert(1)` to icon in `slot[name='icon']` when the element has `.selected` class.  `<ia-icon-label class="selected invert-icon-at-selected">`
+
+ex.
+```html
+<ia-icon-label class="selected invert-icon-at-hover invert-icon-at-selected">
+  <i slot="icon" class="my-icon"></i> <!-- <i/> gets `filter: invert(1)` -->
+  <span>my label</span>
+</ia-icon-label>
+```
+
+CSS Vars
+- `var(--iconWidth, 20px)`
+- `var(--iconHeight, 20px)`
+- `var(--iconLabelGutterWidth, 10px)`
+- `var(--hoverTextColor, #2c2c2c)`
+- `var(--hoverBGColor, #fff)`
+- `var(--selectedBgColor, #fff)`
+- `var(--selectedTextColor, #2c2c2c)`
 
 
 ## Local Demo with `web-dev-server`

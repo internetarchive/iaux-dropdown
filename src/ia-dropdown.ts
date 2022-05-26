@@ -270,6 +270,7 @@ export class IaDropdown extends LitElement {
       border-bottom-left-radius: 4px;
     }
 
+    /* cover the list with the label */
     ul.dropdown-main li > * > :first-child {
       margin: 0;
       display: flex;

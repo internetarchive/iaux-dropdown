@@ -128,6 +128,11 @@ export class IaDropdown extends LitElement {
       display: inline;
       font: sanserif;
       color: var(--dropdownTextColor, #fff);
+      border: 1px dotted red;
+    }
+
+    :host() + *[slot='icon'] {
+      padding: 0;
     }
 
     svg.caret-up-svg,
@@ -196,13 +201,11 @@ export class IaDropdown extends LitElement {
       background-color: var(--dropdownHoverBgColor, #fff);
     }
 
-    ul.dropdown-main li:hover:first-child,
-    ul.dropdown-main li.selected:first-child {
+    ul.dropdown-main li:hover:first-child {
       border-top-color: var(--dropdownHoverBgColor, #fff);
     }
 
-    ul.dropdown-main li:hover:last-child,
-    ul.dropdown-main li.selected:last-child {
+    ul.dropdown-main li:hover:last-child {
       border-bottom-color: var(--dropdownHoverBgColor, #fff);
     }
 
@@ -211,6 +214,19 @@ export class IaDropdown extends LitElement {
     }
     ul.dropdown-main li:hover:not(:last-child) {
       border-bottom: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
+    }
+
+    ul.dropdown-main li.selected:last-child {
+      border-bottom-color: var(--dropdownSelectedBgColor, #fff);
+    }
+
+    ul.dropdown-main li.selected:first-child {
+      border-top-color: var(--dropdownSelectedBgColor, #fff);
+    }
+
+    ul.dropdown-main li.selected > * {
+      background-color: var(--dropdownSelectedBgColor, #fff);
+      color: var(--dropdownSelectedTextColor, #2c2c2c);
     }
 
     ul.dropdown-main li:hover {
@@ -227,10 +243,6 @@ export class IaDropdown extends LitElement {
       cursor: pointer;
       border-bottom: 0.5px solid var(--dropdownBgColor, #333);
       border-top: 0.5px solid var(--dropdownBgColor, #333);
-    }
-
-    ul.dropdown-main li > * {
-      padding: 5px 10px;
     }
 
     ul.dropdown-main li button {
@@ -263,12 +275,7 @@ export class IaDropdown extends LitElement {
       border-bottom-left-radius: 4px;
     }
 
-    ul.dropdown-main li.selected > * {
-      background-color: var(--dropdownSelectedBgColor, #fff);
-      color: var(--dropdownSelectedTextColor, #2c2c2c);
-    }
-
-    ul.dropdown-main li > * :only-child {
+    ul.dropdown-main li > :only-child {
       margin: 0;
       display: flex;
       align-items: center;

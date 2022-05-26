@@ -18,8 +18,6 @@ export class IaIconLabel extends LitElement {
       width: 100%;
       height: 100%;
       position: relative;
-      --hoverFilter: inherit;
-      --selectedFilter: inherit;
     }
 
     :host(:hover) {
@@ -27,16 +25,16 @@ export class IaIconLabel extends LitElement {
       color: var(--hoverTextColor, #2c2c2c);
     }
 
+    :host(.invert-icon-at-hover:hover) slot[name='icon'] {
+      filter: invert(1);
+    }
+
     :host(.selected) {
-      background-color: var(--hoverBGColor, #fff);
+      background-color: var(--selectedBgColor, #fff);
       color: var(--selectedTextColor, #2c2c2c);
     }
 
-    :host(.invert-icon-at-hover.selected:hover) slot[name='icon'] {
-      filter: unset;
-    }
-
-    :host(.invert-icon-at-hover:hover) slot[name='icon'] {
+    :host(.invert-icon-at-selected.selected) slot[name='icon'] {
       filter: invert(1);
     }
 

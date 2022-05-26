@@ -128,11 +128,6 @@ export class IaDropdown extends LitElement {
       display: inline;
       font: sanserif;
       color: var(--dropdownTextColor, #fff);
-      border: 1px dotted red;
-    }
-
-    :host() + *[slot='icon'] {
-      padding: 0;
     }
 
     svg.caret-up-svg,
@@ -169,9 +164,9 @@ export class IaDropdown extends LitElement {
 
     .sr-only {
       border: 0 !important;
-      clip: rect(1px, 1px, 1px, 1px) !important; /* 1 */
+      clip: rect(1px, 1px, 1px, 1px) !important;
       -webkit-clip-path: inset(50%) !important;
-      clip-path: inset(50%) !important; /* 2 */
+      clip-path: inset(50%) !important;
       height: 1px !important;
       margin: -1px !important;
       overflow: hidden !important;
@@ -236,6 +231,11 @@ export class IaDropdown extends LitElement {
       cursor: pointer;
     }
 
+    ul.dropdown-main li:hover > * {
+      background-color: var(--dropdownHoverBgColor, #fff);
+      color: var(--dropdownHoverTextColor, #2c2f2c);
+    }
+
     ul.dropdown-main li {
       background: var(--dropdownBgColor, #333);
       list-style: none;
@@ -260,11 +260,6 @@ export class IaDropdown extends LitElement {
       box-sizing: border-box;
     }
 
-    ul.dropdown-main li:hover a {
-      background-color: var(--dropdownHoverBgColor, #fff);
-      color: var(--dropdownHoverTextColor, #2c2f2c);
-    }
-
     ul.dropdown-main li:first-child {
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
@@ -275,7 +270,7 @@ export class IaDropdown extends LitElement {
       border-bottom-left-radius: 4px;
     }
 
-    ul.dropdown-main li > :only-child {
+    ul.dropdown-main li > * > :first-child {
       margin: 0;
       display: flex;
       align-items: center;

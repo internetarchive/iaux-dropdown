@@ -66,13 +66,8 @@ export class IaDropdown extends LitElement {
     }
   }
 
-  toggleOptions() {
-    if (!this.open) {
-      this.open = true;
-      return;
-    }
-
-    this.open = false;
+  toggleOptions(): void {
+    this.open = !this.open;
   }
 
   get caret(): SVGTemplateResult {
@@ -126,7 +121,6 @@ export class IaDropdown extends LitElement {
   static styles = css`
     :host {
       display: inline;
-      font: sanserif;
       color: var(--dropdownTextColor, #fff);
     }
 

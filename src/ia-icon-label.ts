@@ -21,7 +21,7 @@ export class IaIconLabel extends LitElement {
     }
 
     :host(:hover) {
-      background-color: var(--hoverBGColor, #fff);
+      background-color: var(--hoverBGColor, transparent);
       color: var(--hoverTextColor, #2c2c2c);
     }
 
@@ -30,7 +30,7 @@ export class IaIconLabel extends LitElement {
     }
 
     :host(.selected) {
-      background-color: var(--selectedBgColor, #fff);
+      background-color: var(--selectedBgColor, transparent);
       color: var(--selectedTextColor, #2c2c2c);
     }
 

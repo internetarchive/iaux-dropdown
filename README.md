@@ -7,6 +7,9 @@
 ## Usage
 ```ts
 import { optionInterface } from 'src/ia-dropdown';
+import 'src/ia-dropdown';
+import 'src/ia-icon-label';
+
 const options = [{
   id: 'option-1',
   selectedHandler: (option: optionInterface) => alert(option.id),
@@ -16,15 +19,17 @@ const options = [{
       <span>Ask Question</span>
     </ia-icon-label>
   `
-}]
+}];
 
-<ia-dropdown
+export const dropdown = html`<ia-dropdown
   options=${options}
   displayCaret
   @optionSelected=${({ detail }) => console.log('changed', detail.option )}
 >
   <p id="custom trigger" slot="dropdown-label">Click me to toggle options</p>
-</ia-dropdown>
+</ia-dropdown>`;
+
+
 ```
 
 
@@ -68,8 +73,8 @@ CSS Vars
 - `var(--iconHeight, 20px)`
 - `var(--iconLabelGutterWidth, 10px)`
 - `var(--hoverTextColor, #2c2c2c)`
-- `var(--hoverBGColor, #fff)`
-- `var(--selectedBgColor, #fff)`
+- `var(--hoverBGColor, transparent)`
+- `var(--selectedBgColor, transparent)`
 - `var(--selectedTextColor, #2c2c2c)`
 
 

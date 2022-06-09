@@ -87,14 +87,14 @@ export class IaDropdown extends LitElement {
   }
 
   get caretUp(): SVGTemplateResult {
-    return svg`<svg class="caret-up-svg" height="4" viewBox="0 0 8 4" width="8" xmlns="http://www.w3.org/2000/svg">
+    return svg`<svg class="caret-up-svg" viewBox="0 0 8 4" xmlns="http://www.w3.org/2000/svg">
     <path d="m6.7226499 3.51689722c.22976435.15317623.54019902.0910893.69337525-.13867505.13615665-.20423497.10222882-.47220946-.06836249-.63681849l-.07031256-.05655675-3.2773501-2.18490007-3.2773501 2.18490007c-.22976434.15317623-.29185128.4636109-.13867505.69337524.13615665.20423498.39656688.27598409.61412572.18182636l.07924953-.04315131 2.7226499-1.81402514z"
       fill=""></path>
   </svg>`;
   }
 
   get caretDown(): SVGTemplateResult {
-    return svg`<svg class="caret-down-svg" height="4" viewBox="0 0 8 4" width="8" xmlns="http://www.w3.org/2000/svg">
+    return svg`<svg class="caret-down-svg" viewBox="0 0 8 4" xmlns="http://www.w3.org/2000/svg">
     <path d="m6.7226499.58397485c.22976435-.15317623.54019902-.09108929.69337525.13867505.13615665.20423498.10222882.47220947-.06836249.63681849l-.07031256.05655676-3.2773501 2.18490006-3.2773501-2.18490006c-.22976434-.15317623-.29185128-.4636109-.13867505-.69337525.13615665-.20423497.39656688-.27598409.61412572-.18182636l.07924953.04315131 2.7226499 1.81402515z"
     fill=""></path>
   </svg>`;
@@ -168,6 +168,11 @@ export class IaDropdown extends LitElement {
       position: absolute !important;
       width: 1px !important;
       white-space: nowrap !important;
+    }
+
+    .caret svg {
+      height: var(--caretHeight, 10px);
+      width: var(--caretWidth, 20px);
     }
 
     ul.dropdown-main.closed {

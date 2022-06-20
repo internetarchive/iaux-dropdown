@@ -46,6 +46,8 @@ Hover:
 - `var(--dropdownHoverTextColor, #2c2f2c)`
 - `var(--dropdownHoverTopBottomBorderColor, #333)`
 
+Dropdown list z-index:
+- `var(--dropdownListZIndex, 1)`
 
 #### `<ia-icon-label>` CSS
 
@@ -71,6 +73,7 @@ CSS Vars
 - `var(--hoverBGColor, #fff)`
 - `var(--selectedBgColor, #fff)`
 - `var(--selectedTextColor, #2c2c2c)`
+- `var(--iconLabelGutterWidth, 10px)`
 
 
 ## Local Demo with `web-dev-server`

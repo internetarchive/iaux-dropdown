@@ -175,6 +175,10 @@ export class IaDropdown extends LitElement {
       width: var(--caretWidth, 20px);
     }
 
+    ul {
+      z-index: var(--dropdownListZIndex, 1);
+    }
+
     ul.dropdown-main.closed {
       visibility: hidden;
       height: 1px;

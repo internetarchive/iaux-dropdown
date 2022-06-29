@@ -84,18 +84,6 @@ describe('IaDropdown', () => {
       expect(list).to.exist;
       expect(list?.querySelectorAll('li').length).to.equal(1);
     });
-    it('can set `optionGroup` namespace', async () => {
-      const el = await fixture<IaDropdown>(
-        html`<ia-dropdown .optionGroup=${'foobarz'}></ia-dropdown>`
-      );
-
-      expect(el.optionGroup).to.equal('foobarz');
-
-      const srOnlyCTA = el.shadowRoot?.querySelector(
-        'button.click-main span.cta.sr-only'
-      );
-      expect(srOnlyCTA?.innerHTML).to.contain('foobarz');
-    });
     it('On Option Selected: fires custom event `optionSelected` & option callback `selectedHandler` if available', async () => {
       let optionCallbackReceived = false;
       const el = await fixture<IaDropdown>(
@@ -158,6 +146,31 @@ describe('IaDropdown', () => {
         'button.click-main span.cta.sr-only'
       );
       expect(srOnlyCTA?.innerHTML).to.contain('foobarz');
+    });
+    it('Only show available options in dropdown', async () => {
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown
+          .options=${[
+            {
+              selectedHandler: () => {},
+              label: 'beep',
+              id: 'selected-example',
+            },
+            {
+              selectedHandler: () => {},
+              label: 'bloop',
+              id: 'not-selected-example',
+            },
+          ] as optionInterface[]}
+          .selectedOption=${'selected-example'}
+        ></ia-dropdown>`
+      );
+
+      expect(el.availableOptions.length).to.equal(1);
+
+      el.selectedOption = '';
+      await el.updateComplete;
+      expect(el.availableOptions.length).to.equal(2);
     });
   });
 });

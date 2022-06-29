@@ -100,7 +100,7 @@ export class IaDropdown extends LitElement {
   </svg>`;
   }
 
-  get availableOptions() {
+  get availableOptions(): optionInterface[] {
     return this.options.filter(
       option => this.selectedOption !== (option as optionInterface).id
     );

@@ -100,6 +100,12 @@ export class IaDropdown extends LitElement {
   </svg>`;
   }
 
+  get availableOptions() {
+    return this.options.filter(
+      option => this.selectedOption !== (option as optionInterface).id
+    );
+  }
+
   render() {
     return html`
       <div class="ia-dropdown-group">
@@ -112,7 +118,7 @@ export class IaDropdown extends LitElement {
         </button>
 
         <ul class="dropdown-main ${this.dropdownState}">
-          ${this.options.map(o => this.renderOption(o))}
+          ${this.availableOptions.map(o => this.renderOption(o))}
         </ul>
       </div>
     `;

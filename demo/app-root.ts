@@ -30,7 +30,7 @@ export class AppRoot extends LitElement {
   }
 
   get selectedOptionId(): optionInterface['id'] | '' {
-    return this.selectedOption?.id || '';
+    return this.selectedOption?.id || 'inlibrary';
   }
 
   get iconForDropdown(): SVGTemplateResult {

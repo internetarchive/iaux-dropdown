@@ -20,11 +20,6 @@ export class IaIconLabel extends LitElement {
       position: relative;
     }
 
-    :host(:hover) {
-      background-color: var(--hoverBGColor, #fff);
-      color: var(--hoverTextColor, #2c2c2c);
-    }
-
     :host(.invert-icon-at-hover:hover) slot[name='icon'] {
       filter: invert(1);
     }

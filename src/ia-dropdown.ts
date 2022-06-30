@@ -202,15 +202,18 @@ export class IaDropdown extends LitElement {
     }
 
     ul.dropdown-main {
-      background-color: var(--dropdownHoverBgColor, #fff);
+      background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
     }
 
     ul.dropdown-main li:hover:first-child {
-      border-top-color: var(--dropdownHoverBgColor, #fff);
+      border-top-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
     }
 
     ul.dropdown-main li:hover:last-child {
-      border-bottom-color: var(--dropdownHoverBgColor, #fff);
+      border-bottom-color: var(
+        --dropdownHoverBgColor,
+        rgba(255, 255, 255, 0.3)
+      );
     }
 
     ul.dropdown-main li:hover:not(:first-child) {
@@ -234,15 +237,15 @@ export class IaDropdown extends LitElement {
     }
 
     ul.dropdown-main li:hover {
-      background-color: var(--dropdownHoverBgColor, #fff);
-      color: var(--dropdownHoverTextColor, #2c2f2c);
+      background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
+      color: var(--dropdownHoverTextColor, #fff);
       list-style: none;
       cursor: pointer;
     }
 
     ul.dropdown-main li:hover > * {
-      background-color: var(--dropdownHoverBgColor, #fff);
-      color: var(--dropdownHoverTextColor, #2c2f2c);
+      background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
+      color: var(--dropdownHoverTextColor, #fff);
     }
 
     ul.dropdown-main li {

@@ -212,7 +212,7 @@ export class IaDropdown extends LitElement {
     ul.dropdown-main li:hover:last-child {
       border-bottom-color: var(
         --dropdownHoverBgColor,
-        rgba(255, 255, 255, 0.3)
+        #474747)
       );
     }
 

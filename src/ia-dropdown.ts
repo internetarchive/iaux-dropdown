@@ -202,7 +202,7 @@ export class IaDropdown extends LitElement {
     }
 
     ul.dropdown-main {
-      background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
+      background: var(--dropdownBgColor, #333);
     }
 
     ul.dropdown-main li:hover:first-child {

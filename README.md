@@ -32,10 +32,15 @@ const options = [{
 #### `<ia-dropdown>` CSS
 CSS Vars
 Primary:
+- `var(--dropdownFontSize, 1rem)`
 - `var(--dropdownTextColor, #fff)`
 - `var(--dropdownBgColor, #333)`
 - `var(--dropdownCaretColor, #fff)`
 - `var(--dropdownBorderColor, #fff)`
+- `var(--dropdownBorderWidth, 1px)`
+- `var(--dropdownBorderTopLeftRadius, 4px)`
+  - (similarly for `TopRight`, `BottomRight`, and `BottomLeft`)
+- `var(--dropdownOffsetTop, 5px)` (vertical distance between main button and dropdown)
 
 Selected:
 - `var(--dropdownSelectedBgColor, #fff)`
@@ -49,13 +54,17 @@ Hover:
 Dropdown list z-index:
 - `var(--dropdownListZIndex, 1)`
 
+Dropdown item padding:
+- `var(--dropdownItemPaddingTop, 5px)`
+  - (similarly for `Bottom`, `Left`, and `Right`)
+
 #### `<ia-icon-label>` CSS
 
 Top Level Classes
 - `.invert-icon-at-hover`
   - applies `filter: invert(1)` to icon in `slot[name='icon']` on label hover
 - `.invert-icon-at-selected`
-- applies `filter: invert(1)` to icon in `slot[name='icon']` when the element has `.selected` class.  `<ia-icon-label class="selected invert-icon-at-selected">`
+  - applies `filter: invert(1)` to icon in `slot[name='icon']` when the element has `.selected` class.  `<ia-icon-label class="selected invert-icon-at-selected">`
 
 ex.
 ```html

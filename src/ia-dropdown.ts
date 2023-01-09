@@ -194,11 +194,15 @@ export class IaDropdown extends LitElement {
     ul.dropdown-main {
       position: absolute;
       list-style: none;
-      margin: 5px 0 0 0;
+      margin: var(--dropdownOffsetTop, 5px) 0 0 0;
       padding: 0;
       color: var(--dropdownTextColor, #fff);
-      border-radius: 4px;
-      border: 1px solid var(--dropdownBorderColor, #fff);
+      font-size: var(--dropdownFontSize, 1rem);
+      border-radius: var(--dropdownBorderTopLeftRadius, 4px)
+        var(--dropdownBorderTopRightRadius, 4px)
+        var(--dropdownBorderBottomRightRadius, 4px)
+        var(--dropdownBorderBottomLeftRadius, 4px);
+      border: var(--dropdownBorderWidth, 1px) solid var(--dropdownBorderColor, #fff);
     }
 
     ul.dropdown-main {
@@ -291,7 +295,10 @@ export class IaDropdown extends LitElement {
       align-content: center;
       flex-wrap: nowrap;
       height: 100%;
-      padding: 5px 10px;
+      padding: var(--dropdownItemPaddingTop, 5px)
+        var(--dropdownItemPaddingRight, 10px)
+        var(--dropdownItemPaddingBottom, 5px)
+        var(--dropdownItemPaddingLeft, 10px);
       box-sizing: border-box;
     }
 

@@ -97,7 +97,7 @@ export class IaDropdown extends LitElement {
     this.open = !this.open;
   }
 
-  mainButtonClicked(): void {
+  private mainButtonClicked(): void {
     if (this.handlingCaretClick) {
       this.handlingCaretClick = false;
       return;
@@ -108,18 +108,18 @@ export class IaDropdown extends LitElement {
     }
   }
 
-  caretInteracted(): void {
+  private caretInteracted(): void {
     if (this.openViaCaret) {
       this.toggleOptions();
     }
   }
 
-  caretClicked(): void {
+  private caretClicked(): void {
     this.handlingCaretClick = true; // Prevent the main button handler from toggling it back
     this.caretInteracted();
   }
 
-  caretKeyDown(e: KeyboardEvent): void {
+  private caretKeyDown(e: KeyboardEvent): void {
     if (e.key === 'Enter' || e.key === ' ') {
       this.caretInteracted();
     }

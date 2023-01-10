@@ -67,7 +67,8 @@ export class IaDropdown extends LitElement {
 
   optionClicked(option: optionInterface): void {
     if (this.selectedOption === option.id) {
-      // Don't emit an event for reselecting the same option
+      // Don't emit an event for reselecting the same option, just close the menu.
+      this.open = false;
       return;
     }
 
@@ -323,13 +324,13 @@ export class IaDropdown extends LitElement {
     }
 
     ul.dropdown-main li:first-child {
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
+      border-top-left-radius: var(--dropdownBorderTopLeftRadius, 4px);
+      border-top-right-radius: var(--dropdownBorderTopRightRadius, 4px);
     }
 
     ul.dropdown-main li:last-child {
-      border-bottom-right-radius: 4px;
-      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: var(--dropdownBorderBottomRightRadius, 4px);
+      border-bottom-left-radius: var(--dropdownBorderBottomLeftRadius, 4px);
     }
 
     /* cover the list with the label */

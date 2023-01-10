@@ -22,6 +22,12 @@ export class IaDropdown extends LitElement {
 
   @property({ type: Boolean, attribute: true }) displayCaret = false;
 
+  /**
+   * To allow customizable behavior where the caret must be clicked to
+   * open the dropdown, and clicks on the main button can be handled differently.
+   */
+  @property({ type: Boolean, attribute: true }) onlyOpenOnCaretClick = false;
+
   @property({ type: String, attribute: true }) selectedOption = '';
 
   @property({ type: Array }) options = [];
@@ -70,6 +76,24 @@ export class IaDropdown extends LitElement {
     this.open = !this.open;
   }
 
+  mainButtonClicked(): void {
+    if (!this.onlyOpenOnCaretClick) {
+      this.toggleOptions();
+    }
+  }
+
+  caretClicked(e: PointerEvent): void {
+    e.stopPropagation(); // Prevent the main button handler from running
+    this.toggleOptions();
+  }
+
+  caretKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Enter') {
+      e.stopPropagation();
+      this.toggleOptions();
+    }
+  }
+
   get caret(): SVGTemplateResult {
     if (!this.open) {
       return this.caretDown;
@@ -109,11 +133,17 @@ export class IaDropdown extends LitElement {
   render() {
     return html`
       <div class="ia-dropdown-group">
-        <button @click=${this.toggleOptions} class="click-main">
+        <button @click=${this.mainButtonClicked} class="click-main">
           <span class="cta sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
           ${this.displayCaret
-            ? html`<span class="caret">${this.caret}</span>`
+            ? html`<span
+                class="caret"
+                tabindex=${this.onlyOpenOnCaretClick ? '0' : nothing}
+                @click=${this.caretClicked}
+                @keydown=${this.caretKeyDown}
+                >${this.caret}</span
+              >`
             : nothing}
         </button>
 

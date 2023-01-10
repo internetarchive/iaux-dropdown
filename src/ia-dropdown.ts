@@ -28,6 +28,13 @@ export class IaDropdown extends LitElement {
    */
   @property({ type: Boolean, attribute: true }) onlyOpenOnCaretClick = false;
 
+  /**
+   * To allow customizing whether the currently selected option should still
+   * be shown in the dropdown. By default, it is not.
+   */
+  @property({ type: Boolean, attribute: true }) showSelectedOptionInDropdown =
+    false;
+
   @property({ type: String, attribute: true }) selectedOption = '';
 
   @property({ type: Array }) options = [];
@@ -59,6 +66,11 @@ export class IaDropdown extends LitElement {
   }
 
   optionClicked(option: optionInterface): void {
+    if (this.selectedOption === option.id) {
+      // Don't emit an event for reselecting the same option
+      return;
+    }
+
     this.selectedOption = option.id;
 
     this.dispatchEvent(
@@ -125,6 +137,10 @@ export class IaDropdown extends LitElement {
   }
 
   get availableOptions(): optionInterface[] {
+    // If we're showing the selected option in the dropdown then _all_ options are available.
+    if (this.showSelectedOptionInDropdown) return this.options;
+
+    // Otherwise, exclude the selected option
     return this.options.filter(
       option => this.selectedOption !== (option as optionInterface).id
     );

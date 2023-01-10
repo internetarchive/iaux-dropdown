@@ -188,7 +188,6 @@ export class IaDropdown extends LitElement {
       color: inherit;
       border: none;
       cursor: pointer;
-      outline: inherit;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -245,11 +244,27 @@ export class IaDropdown extends LitElement {
       padding: 0;
       color: var(--dropdownTextColor, #fff);
       font-size: var(--dropdownFontSize, 1rem);
-      border-radius: var(--dropdownBorderTopLeftRadius, 4px)
-        var(--dropdownBorderTopRightRadius, 4px)
-        var(--dropdownBorderBottomRightRadius, 4px)
-        var(--dropdownBorderBottomLeftRadius, 4px);
-      border: var(--dropdownBorderWidth, 1px) solid var(--dropdownBorderColor, #fff);
+      border-radius: var(--dropdownBorderTopLeftRadius, var(--dropdownBorderRadius, 4px))
+        var(--dropdownBorderTopRightRadius, var(--dropdownBorderRadius, 4px))
+        var(--dropdownBorderBottomRightRadius, var(--dropdownBorderRadius, 4px))
+        var(--dropdownBorderBottomLeftRadius, var(--dropdownBorderRadius, 4px));
+      border-top:
+        var(--dropdownBorderTopWidth, var(--dropdownBorderWidth, 1px))
+        solid
+        var(--dropdownBorderColor, #fff);
+      border-right:
+        var(--dropdownBorderRightWidth, var(--dropdownBorderWidth, 1px))
+        solid
+        var(--dropdownBorderColor, #fff);
+      border-bottom:
+        var(--dropdownBorderBottomWidth, var(--dropdownBorderWidth, 1px))
+        solid
+        var(--dropdownBorderColor, #fff);
+      border-left:
+        var(--dropdownBorderLeftWidth, var(--dropdownBorderWidth, 1px))
+        solid
+        var(--dropdownBorderColor, #fff);
+      white-space: var(--dropdownWhiteSpace, normal);
     }
 
     ul.dropdown-main {

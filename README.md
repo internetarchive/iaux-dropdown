@@ -38,9 +38,11 @@ Primary:
 - `var(--dropdownCaretColor, #fff)`
 - `var(--dropdownBorderColor, #fff)`
 - `var(--dropdownBorderWidth, 1px)`
-- `var(--dropdownBorderTopLeftRadius, 4px)`
-  - (similarly for `TopRight`, `BottomRight`, and `BottomLeft`)
+  - Or override with: `--dropdownBorderTopWidth` (similarly for `Right`, `Bottom`, and `Left`)
+- `var(--dropdownBorderRadius, 4px)`
+  - Or override with `--dropdownBorderTopLeftRadius` (similarly for `TopRight`, `BottomRight`, and `BottomLeft`)
 - `var(--dropdownOffsetTop, 5px)` (vertical distance between main button and dropdown)
+- `var(--dropdownWhiteSpace, normal)` (NB: setting to `nowrap` allows the dropdown to exceed the main button's width)
 
 Selected:
 - `var(--dropdownSelectedBgColor, #fff)`
@@ -55,8 +57,7 @@ Dropdown list z-index:
 - `var(--dropdownListZIndex, 1)`
 
 Dropdown item padding:
-- `var(--dropdownItemPaddingTop, 5px)`
-  - (similarly for `Bottom`, `Left`, and `Right`)
+- `var(--dropdownItemPaddingTop, 5px)` (similarly for `Right`, `Bottom`, and `Left`)
 
 #### `<ia-icon-label>` CSS
 

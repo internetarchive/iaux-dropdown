@@ -191,212 +191,214 @@ export class IaDropdown extends LitElement {
     `;
   }
 
-  static get styles() {
-    const dropdownBorderWidth = css`var(--dropdownBorderWidth, 1px)`;
-    const dropdownBorderColor = css`var(--dropdownBorderColor, #fff)`;
-    const dropdownBorderRadius = css`var(--dropdownBorderRadius, 4px)`;
+  static styles = css`
+    :host {
+      display: inline;
+      color: var(--dropdownTextColor, #fff);
+    }
 
-    return css`
-      :host {
-        display: inline;
-        color: var(--dropdownTextColor, #fff);
-      }
+    svg.caret-up-svg,
+    svg.caret-down-svg {
+      fill: var(--dropdownCaretColor, #fff);
+      vertical-align: middle;
+    }
 
-      svg.caret-up-svg,
-      svg.caret-down-svg {
-        fill: var(--dropdownCaretColor, #fff);
-        vertical-align: middle;
-      }
+    button.click-main {
+      background: transparent;
+      color: inherit;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-content: center;
+      flex-wrap: nowrap;
+      flex-direction: row;
+      padding-left: 0;
+    }
 
-      button.click-main {
-        background: transparent;
-        color: inherit;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        align-content: center;
-        flex-wrap: nowrap;
-        flex-direction: row;
-        padding-left: 0;
-      }
+    button slot {
+      padding-right: 5px;
+      display: inline-block;
+    }
 
-      button slot {
-        padding-right: 5px;
-        display: inline-block;
-      }
+    .ia-dropdown-group {
+      width: inherit;
+      height: inherit;
+      position: relative;
+    }
 
-      .ia-dropdown-group {
-        width: inherit;
-        height: inherit;
-        position: relative;
-      }
+    .sr-only {
+      border: 0 !important;
+      clip: rect(1px, 1px, 1px, 1px) !important;
+      -webkit-clip-path: inset(50%) !important;
+      clip-path: inset(50%) !important;
+      height: 1px !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      position: absolute !important;
+      width: 1px !important;
+      white-space: nowrap !important;
+    }
 
-      .sr-only {
-        border: 0 !important;
-        clip: rect(1px, 1px, 1px, 1px) !important;
-        -webkit-clip-path: inset(50%) !important;
-        clip-path: inset(50%) !important;
-        height: 1px !important;
-        margin: -1px !important;
-        overflow: hidden !important;
-        padding: 0 !important;
-        position: absolute !important;
-        width: 1px !important;
-        white-space: nowrap !important;
-      }
+    .caret {
+      /* Maintain centered caret position but with a full-height clickable region */
+      display: flex;
+      align-self: stretch;
+      align-items: center;
+    }
 
-      .caret {
-        /* Maintain centered caret position but with a full-height clickable region */
-        display: flex;
-        align-self: stretch;
-        align-items: center;
-      }
+    .caret svg {
+      height: var(--caretHeight, 10px);
+      width: var(--caretWidth, 20px);
+    }
 
-      .caret svg {
-        height: var(--caretHeight, 10px);
-        width: var(--caretWidth, 20px);
-      }
+    ul {
+      z-index: var(--dropdownListZIndex, 1);
+    }
 
-      ul {
-        z-index: var(--dropdownListZIndex, 1);
-      }
+    ul.dropdown-main.closed {
+      visibility: hidden;
+      height: 1px;
+      width: 1px;
+    }
 
-      ul.dropdown-main.closed {
-        visibility: hidden;
-        height: 1px;
-        width: 1px;
-      }
+    ul.dropdown-main {
+      position: absolute;
+      list-style: none;
+      margin: var(--dropdownOffsetTop, 5px) 0 0 0;
+      padding: 0;
+      color: var(--dropdownTextColor, #fff);
+      font-size: var(--dropdownFontSize, 1rem);
+      border-radius: var(
+          --dropdownBorderTopLeftRadius,
+          var(--dropdownBorderRadius, 4px)
+        )
+        var(--dropdownBorderTopRightRadius, var(--dropdownBorderRadius, 4px))
+        var(--dropdownBorderBottomRightRadius, var(--dropdownBorderRadius, 4px))
+        var(--dropdownBorderBottomLeftRadius, var(--dropdownBorderRadius, 4px));
+      border-top: var(--dropdownBorderTopWidth, var(--dropdownBorderWidth, 1px))
+        solid var(--dropdownBorderColor, #fff);
+      border-right: var(
+          --dropdownBorderRightWidth,
+          var(--dropdownBorderWidth, 1px)
+        )
+        solid var(--dropdownBorderColor, #fff);
+      border-bottom: var(
+          --dropdownBorderBottomWidth,
+          var(--dropdownBorderWidth, 1px)
+        )
+        solid var(--dropdownBorderColor, #fff);
+      border-left: var(
+          --dropdownBorderLeftWidth,
+          var(--dropdownBorderWidth, 1px)
+        )
+        solid var(--dropdownBorderColor, #fff);
+      white-space: var(--dropdownWhiteSpace, normal);
+    }
 
-      ul.dropdown-main {
-        position: absolute;
-        list-style: none;
-        margin: var(--dropdownOffsetTop, 5px) 0 0 0;
-        padding: 0;
-        color: var(--dropdownTextColor, #fff);
-        font-size: var(--dropdownFontSize, 1rem);
-        border-radius: var(
-            --dropdownBorderTopLeftRadius,
-            ${dropdownBorderRadius}
-          )
-          var(--dropdownBorderTopRightRadius, ${dropdownBorderRadius})
-          var(--dropdownBorderBottomRightRadius, ${dropdownBorderRadius})
-          var(--dropdownBorderBottomLeftRadius, ${dropdownBorderRadius});
-        border-top: var(--dropdownBorderTopWidth, ${dropdownBorderWidth}) solid
-          ${dropdownBorderColor};
-        border-right: var(--dropdownBorderRightWidth, ${dropdownBorderWidth})
-          solid ${dropdownBorderColor};
-        border-bottom: var(--dropdownBorderBottomWidth, ${dropdownBorderWidth})
-          solid ${dropdownBorderColor};
-        border-left: var(--dropdownBorderLeftWidth, ${dropdownBorderWidth})
-          solid ${dropdownBorderColor};
-        white-space: var(--dropdownWhiteSpace, normal);
-      }
+    ul.dropdown-main {
+      background: var(--dropdownBgColor, #333);
+    }
 
-      ul.dropdown-main {
-        background: var(--dropdownBgColor, #333);
-      }
+    ul.dropdown-main li:hover:first-child {
+      border-top-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
+    }
 
-      ul.dropdown-main li:hover:first-child {
-        border-top-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
-      }
+    ul.dropdown-main li:hover:last-child {
+      border-bottom-color: var(--dropdownHoverBgColor, #474747);
+    }
 
-      ul.dropdown-main li:hover:last-child {
-        border-bottom-color: var(--dropdownHoverBgColor, #474747);
-      }
+    ul.dropdown-main li:hover:not(:first-child) {
+      border-top: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
+    }
+    ul.dropdown-main li:hover:not(:last-child) {
+      border-bottom: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
+    }
 
-      ul.dropdown-main li:hover:not(:first-child) {
-        border-top: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
-      }
-      ul.dropdown-main li:hover:not(:last-child) {
-        border-bottom: 0.5px solid
-          var(--dropdownHoverTopBottomBorderColor, #333);
-      }
+    ul.dropdown-main li.selected:last-child {
+      border-bottom-color: var(--dropdownSelectedBgColor, #fff);
+    }
 
-      ul.dropdown-main li.selected:last-child {
-        border-bottom-color: var(--dropdownSelectedBgColor, #fff);
-      }
+    ul.dropdown-main li.selected:first-child {
+      border-top-color: var(--dropdownSelectedBgColor, #fff);
+    }
 
-      ul.dropdown-main li.selected:first-child {
-        border-top-color: var(--dropdownSelectedBgColor, #fff);
-      }
+    ul.dropdown-main li.selected > * {
+      background-color: var(--dropdownSelectedBgColor, #fff);
+      color: var(--dropdownSelectedTextColor, #2c2c2c);
+    }
 
-      ul.dropdown-main li.selected > * {
-        background-color: var(--dropdownSelectedBgColor, #fff);
-        color: var(--dropdownSelectedTextColor, #2c2c2c);
-      }
+    ul.dropdown-main li:hover {
+      background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
+      color: var(--dropdownHoverTextColor, #fff);
+      list-style: none;
+      cursor: pointer;
+    }
 
-      ul.dropdown-main li:hover {
-        background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
-        color: var(--dropdownHoverTextColor, #fff);
-        list-style: none;
-        cursor: pointer;
-      }
+    ul.dropdown-main li:hover > *,
+    ul.dropdown-main li:focus-within > * {
+      background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
+      color: var(--dropdownHoverTextColor, #fff);
+    }
 
-      ul.dropdown-main li:hover > *,
-      ul.dropdown-main li:focus-within > * {
-        background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
-        color: var(--dropdownHoverTextColor, #fff);
-      }
+    ul.dropdown-main li {
+      background: var(--dropdownBgColor, #333);
+      list-style: none;
+      height: 30px;
+      cursor: pointer;
+      border-bottom: 0.5px solid var(--dropdownBgColor, #333);
+      border-top: 0.5px solid var(--dropdownBgColor, #333);
+    }
 
-      ul.dropdown-main li {
-        background: var(--dropdownBgColor, #333);
-        list-style: none;
-        height: 30px;
-        cursor: pointer;
-        border-bottom: 0.5px solid var(--dropdownBgColor, #333);
-        border-top: 0.5px solid var(--dropdownBgColor, #333);
-      }
+    ul.dropdown-main li button {
+      background: none;
+      color: inherit;
+      border: none;
+      font: inherit;
+      cursor: pointer;
+      outline: inherit;
+    }
 
-      ul.dropdown-main li button {
-        background: none;
-        color: inherit;
-        border: none;
-        font: inherit;
-        cursor: pointer;
-        outline: inherit;
-      }
+    ul.dropdown-main li a {
+      text-decoration: none;
+      display: block;
+      box-sizing: border-box;
+    }
 
-      ul.dropdown-main li a {
-        text-decoration: none;
-        display: block;
-        box-sizing: border-box;
-      }
+    ul.dropdown-main li:first-child {
+      border-top-left-radius: var(--dropdownBorderTopLeftRadius, 4px);
+      border-top-right-radius: var(--dropdownBorderTopRightRadius, 4px);
+    }
 
-      ul.dropdown-main li:first-child {
-        border-top-left-radius: var(--dropdownBorderTopLeftRadius, 4px);
-        border-top-right-radius: var(--dropdownBorderTopRightRadius, 4px);
-      }
+    ul.dropdown-main li:last-child {
+      border-bottom-right-radius: var(--dropdownBorderBottomRightRadius, 4px);
+      border-bottom-left-radius: var(--dropdownBorderBottomLeftRadius, 4px);
+    }
 
-      ul.dropdown-main li:last-child {
-        border-bottom-right-radius: var(--dropdownBorderBottomRightRadius, 4px);
-        border-bottom-left-radius: var(--dropdownBorderBottomLeftRadius, 4px);
-      }
+    /* cover the list with the label */
+    ul.dropdown-main li > * > :first-child {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      align-content: center;
+      flex-wrap: nowrap;
+      height: 100%;
+      padding: var(--dropdownItemPaddingTop, 5px)
+        var(--dropdownItemPaddingRight, 10px)
+        var(--dropdownItemPaddingBottom, 5px)
+        var(--dropdownItemPaddingLeft, 10px);
+      box-sizing: border-box;
+    }
 
-      /* cover the list with the label */
-      ul.dropdown-main li > * > :first-child {
-        margin: 0;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        align-content: center;
-        flex-wrap: nowrap;
-        height: 100%;
-        padding: var(--dropdownItemPaddingTop, 5px)
-          var(--dropdownItemPaddingRight, 10px)
-          var(--dropdownItemPaddingBottom, 5px)
-          var(--dropdownItemPaddingLeft, 10px);
-        box-sizing: border-box;
-      }
-
-      ul.dropdown-main li > * {
-        width: 100%;
-        height: inherit;
-        color: var(--dropdownTextColor, #fff);
-        background: transparent;
-        padding: 0;
-      }
-    `;
-  }
+    ul.dropdown-main li > * {
+      width: 100%;
+      height: inherit;
+      color: var(--dropdownTextColor, #fff);
+      background: transparent;
+      padding: 0;
+    }
+  `;
 }

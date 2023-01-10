@@ -23,17 +23,24 @@ export class IaDropdown extends LitElement {
   @property({ type: Boolean, attribute: true }) displayCaret = false;
 
   /**
-   * To allow customizable behavior where the caret must be clicked to
-   * open the dropdown, and clicks on the main button can be handled differently.
+   * To allow customizing whether the dropdown menu automatically closes
+   * when an option is selected.
    */
-  @property({ type: Boolean, attribute: true }) onlyOpenOnCaretClick = false;
+  @property({ type: Boolean, attribute: true }) closeOnSelect = false;
+
+  /**
+   * To allow customizable behavior where clicking on the caret or
+   * the main button itself should be handled differently.
+   */
+  @property({ type: Boolean, attribute: true }) openViaButton = true;
+
+  @property({ type: Boolean, attribute: true }) openViaCaret = true;
 
   /**
    * To allow customizing whether the currently selected option should still
    * be shown in the dropdown. By default, it is not.
    */
-  @property({ type: Boolean, attribute: true }) showSelectedOptionInDropdown =
-    false;
+  @property({ type: Boolean, attribute: true }) includeSelectedOption = false;
 
   @property({ type: String, attribute: true }) selectedOption = '';
 
@@ -42,6 +49,8 @@ export class IaDropdown extends LitElement {
   @property({ type: String }) optionGroup: string = 'options';
 
   @property({ type: Function }) optionSelected = () => {};
+
+  private handlingCaretClick = false;
 
   renderOption(availableOption: optionInterface): TemplateResult {
     const { label, url = undefined, id } = availableOption;
@@ -66,23 +75,22 @@ export class IaDropdown extends LitElement {
   }
 
   optionClicked(option: optionInterface): void {
-    if (this.selectedOption === option.id) {
-      // Don't emit an event for reselecting the same option, just close the menu.
-      this.open = false;
-      return;
+    // Don't emit an event for reselecting the same option
+    if (this.selectedOption !== option.id) {
+      this.selectedOption = option.id;
+
+      this.dispatchEvent(
+        new CustomEvent('optionSelected', {
+          detail: { option },
+        })
+      );
+
+      if (option.selectedHandler) {
+        option?.selectedHandler(option);
+      }
     }
 
-    this.selectedOption = option.id;
-
-    this.dispatchEvent(
-      new CustomEvent('optionSelected', {
-        detail: { option },
-      })
-    );
-
-    if (option.selectedHandler) {
-      option?.selectedHandler(option);
-    }
+    if (this.closeOnSelect) this.open = false;
   }
 
   toggleOptions(): void {
@@ -90,20 +98,30 @@ export class IaDropdown extends LitElement {
   }
 
   mainButtonClicked(): void {
-    if (!this.onlyOpenOnCaretClick) {
+    if (this.handlingCaretClick) {
+      this.handlingCaretClick = false;
+      return;
+    }
+
+    if (this.openViaButton) {
       this.toggleOptions();
     }
   }
 
-  caretClicked(e: PointerEvent): void {
-    e.stopPropagation(); // Prevent the main button handler from running
-    this.toggleOptions();
+  caretInteracted(): void {
+    if (this.openViaCaret) {
+      this.toggleOptions();
+    }
+  }
+
+  caretClicked(): void {
+    this.handlingCaretClick = true; // Prevent the main button handler from toggling it back
+    this.caretInteracted();
   }
 
   caretKeyDown(e: KeyboardEvent): void {
-    if (e.key === 'Enter') {
-      e.stopPropagation();
-      this.toggleOptions();
+    if (e.key === 'Enter' || e.key === 'Space') {
+      this.caretInteracted();
     }
   }
 
@@ -139,7 +157,7 @@ export class IaDropdown extends LitElement {
 
   get availableOptions(): optionInterface[] {
     // If we're showing the selected option in the dropdown then _all_ options are available.
-    if (this.showSelectedOptionInDropdown) return this.options;
+    if (this.includeSelectedOption) return this.options;
 
     // Otherwise, exclude the selected option
     return this.options.filter(
@@ -156,7 +174,9 @@ export class IaDropdown extends LitElement {
           ${this.displayCaret
             ? html`<span
                 class="caret"
-                tabindex=${this.onlyOpenOnCaretClick ? '0' : nothing}
+                tabindex=${this.openViaCaret && !this.openViaButton
+                  ? '0'
+                  : nothing}
                 @click=${this.caretClicked}
                 @keydown=${this.caretKeyDown}
                 >${this.caret}</span
@@ -220,6 +240,13 @@ export class IaDropdown extends LitElement {
       position: absolute !important;
       width: 1px !important;
       white-space: nowrap !important;
+    }
+
+    .caret {
+      /* Maintain centered caret position but with a full-height clickable region */
+      display: flex;
+      align-self: stretch;
+      align-items: center;
     }
 
     .caret svg {

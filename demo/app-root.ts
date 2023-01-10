@@ -1,6 +1,6 @@
 /* eslint-disable import/no-duplicates */
 import { html, css, LitElement, SVGTemplateResult, svg } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import '../src/ia-dropdown';
 import { optionInterface } from '../src/ia-dropdown';
 import '../src/ia-icon-label';
@@ -12,6 +12,31 @@ export class AppRoot extends LitElement {
     | 'dark-bg' = 'dark-bg';
 
   @property({ type: Object }) selectedOption?: optionInterface = undefined;
+
+  @state() private displayCaret: boolean = true;
+
+  @state() private openViaButton: boolean = true;
+
+  @state() private openViaCaret: boolean = true;
+
+  @state() private closeOnSelect: boolean = false;
+
+  @state() private includeSelectedOption: boolean = false;
+
+  @query('#display-caret-check')
+  private displayCaretCheck!: HTMLInputElement;
+
+  @query('#open-via-button')
+  private openViaButtonCheck!: HTMLInputElement;
+
+  @query('#open-via-caret')
+  private openViaCaretCheck!: HTMLInputElement;
+
+  @query('#close-on-select')
+  private closeOnSelectCheck!: HTMLInputElement;
+
+  @query('#include-selected-option')
+  private includeSelectedOptionCheck!: HTMLInputElement;
 
   get correctIcon(): SVGTemplateResult {
     const dark = svg`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="m93 95.6190775v4.3809225h-86l.00091489-4.3809225zm-3.3076923-8.0682881v5.8399885h-79.3846154v-5.8399885zm-2.469108-61.3914468.9542264.4869761.4775698 7.7869616.4775698 12.6529979v12.1688152l-.4775698 15.1688858-.0794428 10.2190486-1.3523534.4068998h-73.7729585l-1.4317962-.4068998-.5560994-10.2190486-.4784829-15.0878783v-12.1678841l.4784829-12.7349365.4364787-7.8288621.9953175-.4450756zm2.469108-11.0620805v8.7609138h-79.3846154v-8.7609138zm-39.6923077-15.0972621 43 9.75392865-1.7107266 3.00007055h-81.7325318l-2.5567416-2.4330181z" fill="#2c2c2c"/><path d="m51.6028793 29c7.1190869 7.5359754 22.8971207 15 15.9901161 35.2579416 0-13.8609831-3.3266359-16.0787404-11.6432258-24.3953303.228824 12.6744366.5667995 13.802523.1932361 24.374579-.1341927 3.8850801.3452129 9.4861753-2.6877233 12.6835908-3.8961215 4.1053124-11.3900578 6.002907-16.7795264 4.6437583-4.4827612-1.1344218-6.853801-6.228533-5.0902551-10.9486985 2.2450074-6.0280765 10.8278993-9.3863964 17.0615124-7.555321 1.2866177.3748446 2.711055 1.3636433 2.711055 1.3636433 0-12.4247052.4098317-23.8246554.244811-35.4241632z" fill="#fff"/></g></svg>`;
@@ -45,12 +70,86 @@ export class AppRoot extends LitElement {
     const fooBarIsSelected = this.selectedOptionId === 'foo-bar';
     return html`
       <section><h2>Testing dropdown</h2></section>
+
+      <div>
+        <input
+          type="checkbox"
+          id="display-caret-check"
+          ?checked=${this.displayCaret}
+          @change=${() => {
+            this.displayCaret = this.displayCaretCheck.checked;
+            if (!this.displayCaret) {
+              this.openViaCaret = false;
+              this.openViaCaretCheck.checked = false;
+            }
+          }}
+        />
+        <label for="display-caret-check">Display caret</label>
+      </div>
+
+      <div>
+        <input
+          type="checkbox"
+          id="open-via-button"
+          ?checked=${this.openViaButton}
+          @change=${() => {
+            this.openViaButton = this.openViaButtonCheck.checked;
+          }}
+        />
+        <label for="open-via-button">Open via button</label>
+      </div>
+
+      <div>
+        <input
+          type="checkbox"
+          id="open-via-caret"
+          ?checked=${this.openViaCaret}
+          ?disabled=${!this.displayCaret}
+          @change=${() => {
+            this.openViaCaret = this.openViaCaretCheck.checked;
+          }}
+        />
+        <label for="open-via-caret">Open via caret</label>
+      </div>
+
+      <div>
+        <input
+          type="checkbox"
+          id="close-on-select"
+          ?checked=${this.closeOnSelect}
+          @change=${() => {
+            this.closeOnSelect = this.closeOnSelectCheck.checked;
+          }}
+        />
+        <label for="close-on-select">Close dropdown upon selection</label>
+      </div>
+
+      <div>
+        <input
+          type="checkbox"
+          id="include-selected-option"
+          ?checked=${this.includeSelectedOption}
+          @change=${() => {
+            this.includeSelectedOption =
+              this.includeSelectedOptionCheck.checked;
+          }}
+        />
+        <label for="include-selected-option"
+          >Include selected option in dropdown</label
+        >
+      </div>
+
       <button class="change-color" @click=${() => this.changeColors()}>
         change colors
       </button>
+
       <ia-dropdown
         class=${this.colorScheme}
-        displayCaret
+        ?displayCaret=${this.displayCaret}
+        ?openViaButton=${this.openViaButton}
+        ?openViaCaret=${this.openViaCaret}
+        ?closeOnSelect=${this.closeOnSelect}
+        ?includeSelectedOption=${this.includeSelectedOption}
         selectedOption=${this.selectedOptionId}
         .options=${[
           {
@@ -101,14 +200,16 @@ export class AppRoot extends LitElement {
 
     :host([colorscheme='dark-bg']) {
       background-color: black;
+      color: white;
     }
 
     :host([colorscheme='light-bg']) {
       background-color: pink;
+      color: black;
     }
 
     button.change-color {
-      margin-bottom: 10px;
+      margin: 10px 0;
     }
 
     ia-dropdown.light-bg {

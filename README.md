@@ -9,6 +9,7 @@
 import { optionInterface } from 'src/ia-dropdown';
 const options = [{
   id: 'option-1',
+  url: 'https://example.com',
   selectedHandler: (option: optionInterface) => alert(option.id),
   label: html`
     <ia-icon-label>
@@ -27,7 +28,17 @@ const options = [{
 </ia-dropdown>
 ```
 
+#### `<ia-dropdown>` public properties
 
+- **`open`** controls whether the dropdown menu is currently visible (default: `false`)
+- **`displayCaret`** controls whether the dropdown caret should be present (default: `false`)
+- **`closeOnSelect`** controls whether selecting an option in the dropdown menu should close it (default: `false`)
+- **`openViaButton`** controls whether clicking on the main button (not including the caret) should open the dropdown menu (default: `true`)
+- **`openViaCaret`** controls whether clicking on the main button's caret (if present) should open the dropdown menu (default: `true`)
+- **`includeSelectedOption`** controls whether the currently-selected option is included in the dropdown menu (default: `false`)
+- **`options`** specifies the list of items available in the dropdown menu, using the structure shown above. Only `id` and `label` are required.
+- **`selectedOption`** is a string specifying the `id` of the currently-selected option (default: `''`)
+- **`optionGroup`** is a string describing the dropdown's purpose, accessible to screen-readers only (default: `'options'`)
 
 #### `<ia-dropdown>` CSS
 CSS Vars

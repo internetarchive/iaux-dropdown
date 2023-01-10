@@ -120,7 +120,7 @@ export class IaDropdown extends LitElement {
   }
 
   caretKeyDown(e: KeyboardEvent): void {
-    if (e.key === 'Enter' || e.key === 'Space') {
+    if (e.key === 'Enter' || e.key === ' ') {
       this.caretInteracted();
     }
   }
@@ -334,7 +334,8 @@ export class IaDropdown extends LitElement {
         cursor: pointer;
       }
 
-      ul.dropdown-main li:hover > * {
+      ul.dropdown-main li:hover > *,
+      ul.dropdown-main li:focus-within > * {
         background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
         color: var(--dropdownHoverTextColor, #fff);
       }

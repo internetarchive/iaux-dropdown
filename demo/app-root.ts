@@ -1,5 +1,13 @@
 /* eslint-disable import/no-duplicates */
-import { html, css, LitElement, SVGTemplateResult, svg } from 'lit';
+import {
+  html,
+  css,
+  LitElement,
+  SVGTemplateResult,
+  svg,
+  TemplateResult,
+  nothing,
+} from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import '../src/ia-dropdown';
 import { optionInterface } from '../src/ia-dropdown';
@@ -66,78 +74,77 @@ export class AppRoot extends LitElement {
    `;
   }
 
+  private checkboxRowTemplate(options: {
+    id: string;
+    label: string;
+    isChecked?: boolean;
+    isDisabled?: boolean;
+    onChange?: (e?: Event) => any;
+  }): TemplateResult {
+    return html`
+      <div>
+        <input
+          type="checkbox"
+          id=${options.id}
+          ?checked=${options.isChecked ?? false}
+          ?disabled=${options.isDisabled ?? false}
+          @change=${options.onChange ?? nothing}
+        />
+        <label for=${options.id}>${options.label}</label>
+      </div>
+    `;
+  }
+
   render() {
     const fooBarIsSelected = this.selectedOptionId === 'foo-bar';
     return html`
       <section><h2>Testing dropdown</h2></section>
 
-      <div>
-        <input
-          type="checkbox"
-          id="display-caret-check"
-          ?checked=${this.displayCaret}
-          @change=${() => {
-            this.displayCaret = this.displayCaretCheck.checked;
-            if (!this.displayCaret) {
-              this.openViaCaret = false;
-              this.openViaCaretCheck.checked = false;
-            }
-          }}
-        />
-        <label for="display-caret-check">Display caret</label>
-      </div>
-
-      <div>
-        <input
-          type="checkbox"
-          id="open-via-button"
-          ?checked=${this.openViaButton}
-          @change=${() => {
-            this.openViaButton = this.openViaButtonCheck.checked;
-          }}
-        />
-        <label for="open-via-button">Open via button</label>
-      </div>
-
-      <div>
-        <input
-          type="checkbox"
-          id="open-via-caret"
-          ?checked=${this.openViaCaret}
-          ?disabled=${!this.displayCaret}
-          @change=${() => {
-            this.openViaCaret = this.openViaCaretCheck.checked;
-          }}
-        />
-        <label for="open-via-caret">Open via caret</label>
-      </div>
-
-      <div>
-        <input
-          type="checkbox"
-          id="close-on-select"
-          ?checked=${this.closeOnSelect}
-          @change=${() => {
-            this.closeOnSelect = this.closeOnSelectCheck.checked;
-          }}
-        />
-        <label for="close-on-select">Close dropdown upon selection</label>
-      </div>
-
-      <div>
-        <input
-          type="checkbox"
-          id="include-selected-option"
-          ?checked=${this.includeSelectedOption}
-          @change=${() => {
-            this.includeSelectedOption =
-              this.includeSelectedOptionCheck.checked;
-          }}
-        />
-        <label for="include-selected-option"
-          >Include selected option in dropdown</label
-        >
-      </div>
+      ${this.checkboxRowTemplate({
+        id: 'display-caret-check',
+        label: 'Display caret',
+        isChecked: this.displayCaret,
+        onChange: () => {
+          this.displayCaret = this.displayCaretCheck.checked;
+          if (!this.displayCaret) {
+            this.openViaCaret = false;
+            this.openViaCaretCheck.checked = false;
+          }
+        },
+      })}
+      ${this.checkboxRowTemplate({
+        id: 'open-via-button',
+        label: 'Open via button',
+        isChecked: this.openViaButton,
+        onChange: () => {
+          this.openViaButton = this.openViaButtonCheck.checked;
+        },
+      })}
+      ${this.checkboxRowTemplate({
+        id: 'open-via-caret',
+        label: 'Open via caret',
+        isChecked: this.openViaCaret,
+        isDisabled: !this.displayCaret,
+        onChange: () => {
+          this.openViaCaret = this.openViaCaretCheck.checked;
+        },
+      })}
+      ${this.checkboxRowTemplate({
+        id: 'close-on-select',
+        label: 'Close dropdown upon selection',
+        isChecked: this.closeOnSelect,
+        onChange: () => {
+          this.closeOnSelect = this.closeOnSelectCheck.checked;
+        },
+      })}
+      ${this.checkboxRowTemplate({
+        id: 'include-selected-option',
+        label: 'Include selected option in dropdown',
+        isChecked: this.includeSelectedOption,
+        onChange: () => {
+          this.includeSelectedOption = this.includeSelectedOptionCheck.checked;
+        },
+      })}
 
       <button class="change-color" @click=${() => this.changeColors()}>
         change colors

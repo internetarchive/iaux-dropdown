@@ -85,9 +85,7 @@ export class IaDropdown extends LitElement {
         })
       );
 
-      if (option.selectedHandler) {
-        option?.selectedHandler(option);
-      }
+      option.selectedHandler?.(option);
     }
 
     if (this.closeOnSelect) this.open = false;

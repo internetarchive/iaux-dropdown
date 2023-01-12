@@ -70,6 +70,17 @@ export class IaDropdown extends LitElement {
 
   @property({ type: Function }) optionSelected = () => {};
 
+  /**
+   * In cases where both the main button and its caret are interactive, we don't
+   * want a click on the caret to trigger effects on both. However, stopping
+   * propagation of the caret clicks entirely would also prevent consumers of this
+   * component from receiving them, which is undesirable.
+   *
+   * As a workaround, this flag is set when we handle a click on the caret, causing
+   * the main button handler to ignore that click (and accordingly clear this flag).
+   * In essence, it causes event propagation to locally skip the main button,
+   * while still allowing the event to bubble out of the component.
+   */
   private handlingCaretClick = false;
 
   renderOption(availableOption: optionInterface): TemplateResult {
@@ -116,6 +127,8 @@ export class IaDropdown extends LitElement {
   }
 
   private mainButtonClicked(): void {
+    // If this click was already handled on the caret, we should ignore it so
+    // that we don't toggle the options twice.
     if (this.handlingCaretClick) {
       this.handlingCaretClick = false;
       return;
@@ -133,7 +146,8 @@ export class IaDropdown extends LitElement {
   }
 
   private caretClicked(): void {
-    this.handlingCaretClick = true; // Prevent the main button handler from toggling it back
+    // Prevent the main button handler from running too
+    this.handlingCaretClick = true;
     this.caretInteracted();
   }
 

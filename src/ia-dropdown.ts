@@ -18,33 +18,53 @@ export interface optionInterface {
 
 @customElement('ia-dropdown')
 export class IaDropdown extends LitElement {
+  /**
+   * Determines whether the dropdown's option menu is currently visible.
+   */
   @property({ type: Boolean, attribute: true }) open = false;
 
+  /**
+   * Specifies whether a caret should be displayed beside the main button content.
+   * Defaults to `false`.
+   */
   @property({ type: Boolean, attribute: true }) displayCaret = false;
 
   /**
-   * To allow customizing whether the dropdown menu automatically closes
-   * when an option is selected.
+   * Specifies whether the dropdown should automatically close when an option is selected.
+   *
+   * Defaults to `false`, for backwards-compatibility.
    */
   @property({ type: Boolean, attribute: true }) closeOnSelect = false;
 
   /**
-   * To allow customizable behavior where clicking on the caret or
-   * the main button itself should be handled differently.
+   * Specifies whether pressing the main button (aside from the caret) should open
+   * the dropdown.
+   *
+   * Both this and `openViaCaret` default to true, making the entire main-button-and-caret
+   * row interactive. However, each of these can be disabled independently.
    */
   @property({ type: Boolean, attribute: true }) openViaButton = true;
 
+  /**
+   * Specifies whether pressing the caret element (if present) should open the dropdown.
+   *
+   * Both this and `openViaButton` default to true, making the entire main-button-and-caret
+   * row interactive. However, each of these can be disabled independently.
+   */
   @property({ type: Boolean, attribute: true }) openViaCaret = true;
 
   /**
-   * To allow customizing whether the currently selected option should still
-   * be shown in the dropdown. By default, it is not.
+   * Specifies whether the currently-selected option should be shown in the dropdown menu.
+   * When `true`, all options are always listed.
+   * When `false`, only unselected options are listed.
+   *
+   * Defaults to `false`, for backwards-compatibility.
    */
   @property({ type: Boolean, attribute: true }) includeSelectedOption = false;
 
   @property({ type: String, attribute: true }) selectedOption = '';
 
-  @property({ type: Array }) options = [];
+  @property({ type: Array }) options: optionInterface[] = [];
 
   @property({ type: String }) optionGroup: string = 'options';
 

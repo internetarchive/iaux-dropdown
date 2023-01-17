@@ -53,6 +53,7 @@ Primary:
 - `var(--dropdownBorderRadius, 4px)`
   - Or override with `--dropdownBorderTopLeftRadius` (similarly for `TopRight`, `BottomRight`, and `BottomLeft`)
 - `var(--dropdownOffsetTop, 5px)` (vertical distance between main button and dropdown)
+- `var(--dropdownButtonPadding, 0)`
 - `var(--dropdownWhiteSpace, normal)` (NB: setting to `nowrap` allows the dropdown to exceed the main button's width)
 
 Selected:
@@ -69,6 +70,11 @@ Dropdown list z-index:
 
 Dropdown item padding:
 - `var(--dropdownItemPaddingTop, 5px)` (similarly for `Right`, `Bottom`, and `Left`)
+
+Caret:
+- `var(--caretWidth, 20px)`
+- `var(--caretHeight, 10px)`
+- `var(--caretPadding, 0)`
 
 #### `<ia-icon-label>` CSS
 

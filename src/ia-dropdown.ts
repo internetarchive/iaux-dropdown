@@ -247,6 +247,7 @@ export class IaDropdown extends LitElement {
       button.click-main {
         background: transparent;
         color: inherit;
+        padding: var(--dropdownMainButtonPadding, 0px);
         border: none;
         cursor: pointer;
         display: flex;
@@ -255,7 +256,6 @@ export class IaDropdown extends LitElement {
         align-content: center;
         flex-wrap: nowrap;
         flex-direction: row;
-        padding-left: 0;
       }
 
       button slot {
@@ -288,6 +288,7 @@ export class IaDropdown extends LitElement {
         display: flex;
         align-self: stretch;
         align-items: center;
+        padding: var(--caretPadding, 0px);
       }
 
       .caret svg {

@@ -153,6 +153,7 @@ export class IaDropdown extends LitElement {
 
   private caretKeyDown(e: KeyboardEvent): void {
     if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(); // Spacebar scrolls the page by default
       this.caretInteracted();
     }
   }

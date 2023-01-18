@@ -205,15 +205,19 @@ export class IaDropdown extends LitElement {
           <span class="cta sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
           ${this.displayCaret
-            ? html`<span
-                class="caret"
-                tabindex=${this.openViaCaret && !this.openViaButton
-                  ? '0'
-                  : nothing}
-                @click=${this.caretClicked}
-                @keydown=${this.caretKeyDown}
-                >${this.caret}</span
-              >`
+            ? html`
+                <span
+                  class="caret"
+                  tabindex=${this.openViaCaret && !this.openViaButton
+                    ? '0'
+                    : nothing}
+                  role=${this.openViaCaret ? 'button' : nothing}
+                  @click=${this.caretClicked}
+                  @keydown=${this.caretKeyDown}
+                >
+                  ${this.caret}
+                </span>
+              `
             : nothing}
         </button>
 

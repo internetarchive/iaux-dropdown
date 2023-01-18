@@ -42,6 +42,7 @@ describe('IaDropdown', () => {
 
       expect(el.open).to.be.true;
     });
+
     it('caret, when displayed, changes to point up when dropdown is opened', async () => {
       const el = await fixture<IaDropdown>(
         html`<ia-dropdown displayCaret></ia-dropdown>`
@@ -62,6 +63,69 @@ describe('IaDropdown', () => {
       expect(caret?.querySelector('.caret-down-svg')).to.not.exist;
       expect(caret?.querySelector('.caret-up-svg')).to.exist;
       expect(el.open).to.be.true;
+    });
+
+    it('Can optionally disable toggling via main button', async () => {
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown displayCaret .openViaButton=${false}></ia-dropdown>`
+      );
+
+      expect(el.open).to.be.false;
+      const mainButton = el.shadowRoot?.querySelector(
+        'button.click-main'
+      ) as HTMLButtonElement;
+      mainButton?.click();
+      await el.updateComplete;
+
+      // Should remain closed from clicking main button
+      expect(el.open).to.be.false;
+
+      // But clicking on the caret should open it
+      (el.shadowRoot?.querySelector('.caret') as HTMLElement)?.click();
+      await el.updateComplete;
+      expect(el.open).to.be.true;
+    });
+
+    it('Can optionally disable toggling via caret', async () => {
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown displayCaret .openViaCaret=${false}></ia-dropdown>`
+      );
+
+      expect(el.open).to.be.false;
+      (el.shadowRoot?.querySelector('.caret') as HTMLElement)?.click();
+      await el.updateComplete;
+
+      // Should remain closed from clicking caret
+      expect(el.open).to.be.false;
+
+      // But clicking on the button itself should open it
+      const mainButton = el.shadowRoot?.querySelector(
+        'button.click-main'
+      ) as HTMLButtonElement;
+      mainButton?.click();
+      await el.updateComplete;
+      expect(el.open).to.be.true;
+    });
+
+    it('Can be toggled via keyboard interaction', async () => {
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown displayCaret></ia-dropdown>`
+      );
+
+      const enterKeyEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      const spaceKeyEvent = new KeyboardEvent('keydown', { key: ' ' });
+
+      const caret = el.shadowRoot?.querySelector('.caret') as HTMLElement;
+      expect(caret).to.exist;
+      expect(el.open).to.be.false;
+
+      caret?.dispatchEvent(enterKeyEvent);
+      await el.updateComplete;
+      expect(el.open).to.be.true;
+
+      caret?.dispatchEvent(spaceKeyEvent);
+      await el.updateComplete;
+      expect(el.open).to.be.false;
     });
   });
 
@@ -84,6 +148,7 @@ describe('IaDropdown', () => {
       expect(list).to.exist;
       expect(list?.querySelectorAll('li').length).to.equal(1);
     });
+
     it('On Option Selected: fires custom event `optionSelected` & option callback `selectedHandler` if available', async () => {
       let optionCallbackReceived = false;
       const el = await fixture<IaDropdown>(
@@ -135,6 +200,36 @@ describe('IaDropdown', () => {
         'beep'
       );
     });
+
+    it('Can optionally close dropdown when an option is selected', async () => {
+      const options: optionInterface[] = [
+        {
+          label: html`<p class="foo">foo</p>`,
+          id: 'foo',
+        },
+      ];
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown closeOnSelect .options=${options}></ia-dropdown>`
+      );
+
+      expect(el.open).to.be.false;
+
+      const list = el.shadowRoot?.querySelector('ul');
+      expect(list).to.exist;
+      expect(list?.querySelectorAll('li').length).to.equal(1);
+
+      const mainButton = el.shadowRoot?.querySelector(
+        'button.click-main'
+      ) as HTMLButtonElement;
+      mainButton?.click();
+      await el.updateComplete;
+      expect(el.open).to.be.true;
+
+      (list?.querySelector('li > button') as HTMLButtonElement)?.click();
+      await el.updateComplete;
+      expect(el.open).to.be.false;
+    });
+
     it('can set `optionGroup` namespace', async () => {
       const el = await fixture<IaDropdown>(
         html`<ia-dropdown .optionGroup=${'foobarz'}></ia-dropdown>`
@@ -147,6 +242,7 @@ describe('IaDropdown', () => {
       );
       expect(srOnlyCTA?.innerHTML).to.contain('foobarz');
     });
+
     it('Only show available options in dropdown', async () => {
       const el = await fixture<IaDropdown>(
         html`<ia-dropdown
@@ -167,6 +263,33 @@ describe('IaDropdown', () => {
       );
 
       expect(el.availableOptions.length).to.equal(1);
+
+      el.selectedOption = '';
+      await el.updateComplete;
+      expect(el.availableOptions.length).to.equal(2);
+    });
+
+    it('Can optionally show all options in dropdown, including selected', async () => {
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown
+          includeSelectedOption
+          .options=${[
+            {
+              selectedHandler: () => {},
+              label: 'beep',
+              id: 'selected-example',
+            },
+            {
+              selectedHandler: () => {},
+              label: 'bloop',
+              id: 'not-selected-example',
+            },
+          ] as optionInterface[]}
+          .selectedOption=${'selected-example'}
+        ></ia-dropdown>`
+      );
+
+      expect(el.availableOptions.length).to.equal(2);
 
       el.selectedOption = '';
       await el.updateComplete;

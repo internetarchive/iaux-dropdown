@@ -18,17 +18,70 @@ export interface optionInterface {
 
 @customElement('ia-dropdown')
 export class IaDropdown extends LitElement {
+  /**
+   * Determines whether the dropdown's option menu is currently visible.
+   */
   @property({ type: Boolean, attribute: true }) open = false;
 
+  /**
+   * Specifies whether a caret should be displayed beside the main button content.
+   * Defaults to `false`.
+   */
   @property({ type: Boolean, attribute: true }) displayCaret = false;
+
+  /**
+   * Specifies whether the dropdown should automatically close when an option is selected.
+   *
+   * Defaults to `false`, for backwards-compatibility.
+   */
+  @property({ type: Boolean, attribute: true }) closeOnSelect = false;
+
+  /**
+   * Specifies whether pressing the main button (aside from the caret) should open
+   * the dropdown.
+   *
+   * Both this and `openViaCaret` default to true, making the entire main-button-and-caret
+   * row interactive. However, each of these can be disabled independently.
+   */
+  @property({ type: Boolean, attribute: true }) openViaButton = true;
+
+  /**
+   * Specifies whether pressing the caret element (if present) should open the dropdown.
+   *
+   * Both this and `openViaButton` default to true, making the entire main-button-and-caret
+   * row interactive. However, each of these can be disabled independently.
+   */
+  @property({ type: Boolean, attribute: true }) openViaCaret = true;
+
+  /**
+   * Specifies whether the currently-selected option should be shown in the dropdown menu.
+   * When `true`, all options are always listed.
+   * When `false`, only unselected options are listed.
+   *
+   * Defaults to `false`, for backwards-compatibility.
+   */
+  @property({ type: Boolean, attribute: true }) includeSelectedOption = false;
 
   @property({ type: String, attribute: true }) selectedOption = '';
 
-  @property({ type: Array }) options = [];
+  @property({ type: Array }) options: optionInterface[] = [];
 
   @property({ type: String }) optionGroup: string = 'options';
 
   @property({ type: Function }) optionSelected = () => {};
+
+  /**
+   * In cases where both the main button and its caret are interactive, we don't
+   * want a click on the caret to trigger effects on both. However, stopping
+   * propagation of the caret clicks entirely would also prevent consumers of this
+   * component from receiving them, which is undesirable.
+   *
+   * As a workaround, this flag is set when we handle a click on the caret, causing
+   * the main button handler to ignore that click (and accordingly clear this flag).
+   * In essence, it causes event propagation to locally skip the main button,
+   * while still allowing the event to bubble out of the component.
+   */
+  private handlingCaretClick = false;
 
   renderOption(availableOption: optionInterface): TemplateResult {
     const { label, url = undefined, id } = availableOption;
@@ -53,21 +106,56 @@ export class IaDropdown extends LitElement {
   }
 
   optionClicked(option: optionInterface): void {
-    this.selectedOption = option.id;
+    // Don't emit an event for reselecting the same option
+    if (this.selectedOption !== option.id) {
+      this.selectedOption = option.id;
 
-    this.dispatchEvent(
-      new CustomEvent('optionSelected', {
-        detail: { option },
-      })
-    );
+      this.dispatchEvent(
+        new CustomEvent('optionSelected', {
+          detail: { option },
+        })
+      );
 
-    if (option.selectedHandler) {
-      option?.selectedHandler(option);
+      option.selectedHandler?.(option);
     }
+
+    if (this.closeOnSelect) this.open = false;
   }
 
   toggleOptions(): void {
     this.open = !this.open;
+  }
+
+  private mainButtonClicked(): void {
+    // If this click was already handled on the caret, we should ignore it so
+    // that we don't toggle the options twice.
+    if (this.handlingCaretClick) {
+      this.handlingCaretClick = false;
+      return;
+    }
+
+    if (this.openViaButton) {
+      this.toggleOptions();
+    }
+  }
+
+  private caretInteracted(): void {
+    if (this.openViaCaret) {
+      this.toggleOptions();
+    }
+  }
+
+  private caretClicked(): void {
+    // Prevent the main button handler from running too
+    this.handlingCaretClick = true;
+    this.caretInteracted();
+  }
+
+  private caretKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(); // Spacebar scrolls the page by default
+      this.caretInteracted();
+    }
   }
 
   get caret(): SVGTemplateResult {
@@ -101,6 +189,10 @@ export class IaDropdown extends LitElement {
   }
 
   get availableOptions(): optionInterface[] {
+    // If we're showing the selected option in the dropdown then _all_ options are available.
+    if (this.includeSelectedOption) return this.options;
+
+    // Otherwise, exclude the selected option
     return this.options.filter(
       option => this.selectedOption !== (option as optionInterface).id
     );
@@ -109,11 +201,23 @@ export class IaDropdown extends LitElement {
   render() {
     return html`
       <div class="ia-dropdown-group">
-        <button @click=${this.toggleOptions} class="click-main">
+        <button @click=${this.mainButtonClicked} class="click-main">
           <span class="cta sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
           ${this.displayCaret
-            ? html`<span class="caret">${this.caret}</span>`
+            ? html`
+                <span
+                  class="caret"
+                  tabindex=${this.openViaCaret && !this.openViaButton
+                    ? '0'
+                    : nothing}
+                  role=${this.openViaCaret ? 'button' : nothing}
+                  @click=${this.caretClicked}
+                  @keydown=${this.caretKeyDown}
+                >
+                  ${this.caret}
+                </span>
+              `
             : nothing}
         </button>
 
@@ -124,183 +228,220 @@ export class IaDropdown extends LitElement {
     `;
   }
 
-  static styles = css`
-    :host {
-      display: inline;
-      color: var(--dropdownTextColor, #fff);
-    }
+  static get styles() {
+    const dropdownBorderWidth = css`var(--dropdownBorderWidth, 1px)`;
+    const dropdownBorderRadius = css`var(--dropdownBorderRadius, 4px)`;
+    const dropdownBorderColor = css`var(--dropdownBorderColor, #fff)`;
+    const dropdownBgColor = css`var(--dropdownBgColor, #333)`;
+    const dropdownTextColor = css`var(--dropdownTextColor, #fff)`;
+    const dropdownHoverBgColor = css`var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3))`;
+    const dropdownSelectedBgColor = css`var(--dropdownSelectedBgColor, #fff)`;
 
-    svg.caret-up-svg,
-    svg.caret-down-svg {
-      fill: var(--dropdownCaretColor, #fff);
-      vertical-align: middle;
-    }
+    return css`
+      :host {
+        display: inline;
+        color: ${dropdownTextColor};
+      }
 
-    button.click-main {
-      background: transparent;
-      color: inherit;
-      border: none;
-      cursor: pointer;
-      outline: inherit;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      align-content: center;
-      flex-wrap: nowrap;
-      flex-direction: row;
-      padding-left: 0;
-    }
+      svg.caret-up-svg,
+      svg.caret-down-svg {
+        fill: var(--dropdownCaretColor, #fff);
+        vertical-align: middle;
+      }
 
-    button slot {
-      padding-right: 5px;
-      display: inline-block;
-    }
+      button.click-main {
+        background: transparent;
+        color: inherit;
+        padding: var(--dropdownMainButtonPadding, 0px);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: nowrap;
+        flex-direction: row;
+      }
 
-    .ia-dropdown-group {
-      width: inherit;
-      height: inherit;
-      position: relative;
-    }
+      button slot {
+        padding-right: 5px;
+        display: inline-block;
+      }
 
-    .sr-only {
-      border: 0 !important;
-      clip: rect(1px, 1px, 1px, 1px) !important;
-      -webkit-clip-path: inset(50%) !important;
-      clip-path: inset(50%) !important;
-      height: 1px !important;
-      margin: -1px !important;
-      overflow: hidden !important;
-      padding: 0 !important;
-      position: absolute !important;
-      width: 1px !important;
-      white-space: nowrap !important;
-    }
+      .ia-dropdown-group {
+        width: inherit;
+        height: inherit;
+        position: relative;
+      }
 
-    .caret svg {
-      height: var(--caretHeight, 10px);
-      width: var(--caretWidth, 20px);
-    }
+      .sr-only {
+        border: 0 !important;
+        clip: rect(1px, 1px, 1px, 1px) !important;
+        -webkit-clip-path: inset(50%) !important;
+        clip-path: inset(50%) !important;
+        height: 1px !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        position: absolute !important;
+        width: 1px !important;
+        white-space: nowrap !important;
+      }
 
-    ul {
-      z-index: var(--dropdownListZIndex, 1);
-    }
+      .caret {
+        /* Maintain centered caret position but with a full-height clickable region */
+        display: flex;
+        align-self: stretch;
+        align-items: center;
+        padding: var(--caretPadding, 0px);
+      }
 
-    ul.dropdown-main.closed {
-      visibility: hidden;
-      height: 1px;
-      width: 1px;
-    }
+      .caret svg {
+        height: var(--caretHeight, 10px);
+        width: var(--caretWidth, 20px);
+      }
 
-    ul.dropdown-main {
-      position: absolute;
-      list-style: none;
-      margin: 5px 0 0 0;
-      padding: 0;
-      color: var(--dropdownTextColor, #fff);
-      border-radius: 4px;
-      border: 1px solid var(--dropdownBorderColor, #fff);
-    }
+      ul {
+        z-index: var(--dropdownListZIndex, 1);
+      }
 
-    ul.dropdown-main {
-      background: var(--dropdownBgColor, #333);
-    }
+      ul.dropdown-main.closed {
+        visibility: hidden;
+        height: 1px;
+        width: 1px;
+      }
 
-    ul.dropdown-main li:hover:first-child {
-      border-top-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
-    }
+      ul.dropdown-main {
+        position: absolute;
+        list-style: none;
+        margin: var(--dropdownOffsetTop, 5px) 0 0 0;
+        padding: 0;
+        color: ${dropdownTextColor};
+        font-size: var(--dropdownFontSize, inherit);
 
-    ul.dropdown-main li:hover:last-child {
-      border-bottom-color: var(
-        --dropdownHoverBgColor,
-        #474747)
-      );
-    }
+        border-top: var(--dropdownBorderTopWidth, ${dropdownBorderWidth}) solid
+          ${dropdownBorderColor};
+        border-right: var(--dropdownBorderRightWidth, ${dropdownBorderWidth})
+          solid ${dropdownBorderColor};
+        border-bottom: var(--dropdownBorderBottomWidth, ${dropdownBorderWidth})
+          solid ${dropdownBorderColor};
+        border-left: var(--dropdownBorderLeftWidth, ${dropdownBorderWidth})
+          solid ${dropdownBorderColor};
 
-    ul.dropdown-main li:hover:not(:first-child) {
-      border-top: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
-    }
-    ul.dropdown-main li:hover:not(:last-child) {
-      border-bottom: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
-    }
+        border-radius: var(
+            --dropdownBorderTopLeftRadius,
+            ${dropdownBorderRadius}
+          )
+          var(--dropdownBorderTopRightRadius, ${dropdownBorderRadius})
+          var(--dropdownBorderBottomRightRadius, ${dropdownBorderRadius})
+          var(--dropdownBorderBottomLeftRadius, ${dropdownBorderRadius});
 
-    ul.dropdown-main li.selected:last-child {
-      border-bottom-color: var(--dropdownSelectedBgColor, #fff);
-    }
+        white-space: var(--dropdownWhiteSpace, normal);
+      }
 
-    ul.dropdown-main li.selected:first-child {
-      border-top-color: var(--dropdownSelectedBgColor, #fff);
-    }
+      ul.dropdown-main {
+        background: ${dropdownBgColor};
+      }
 
-    ul.dropdown-main li.selected > * {
-      background-color: var(--dropdownSelectedBgColor, #fff);
-      color: var(--dropdownSelectedTextColor, #2c2c2c);
-    }
+      ul.dropdown-main li:hover {
+        background-color: ${dropdownHoverBgColor};
+        color: var(--dropdownHoverTextColor, #fff);
+        list-style: none;
+        cursor: pointer;
+      }
 
-    ul.dropdown-main li:hover {
-      background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
-      color: var(--dropdownHoverTextColor, #fff);
-      list-style: none;
-      cursor: pointer;
-    }
+      ul.dropdown-main li:hover:first-child {
+        border-top-color: ${dropdownHoverBgColor};
+      }
 
-    ul.dropdown-main li:hover > * {
-      background-color: var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3));
-      color: var(--dropdownHoverTextColor, #fff);
-    }
+      ul.dropdown-main li:hover:last-child {
+        border-bottom-color: ${dropdownHoverBgColor};
+      }
 
-    ul.dropdown-main li {
-      background: var(--dropdownBgColor, #333);
-      list-style: none;
-      height: 30px;
-      cursor: pointer;
-      border-bottom: 0.5px solid var(--dropdownBgColor, #333);
-      border-top: 0.5px solid var(--dropdownBgColor, #333);
-    }
+      ul.dropdown-main li:hover:not(:first-child) {
+        border-top: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
+      }
+      ul.dropdown-main li:hover:not(:last-child) {
+        border-bottom: 0.5px solid
+          var(--dropdownHoverTopBottomBorderColor, #333);
+      }
 
-    ul.dropdown-main li button {
-      background: none;
-      color: inherit;
-      border: none;
-      font: inherit;
-      cursor: pointer;
-      outline: inherit;
-    }
+      ul.dropdown-main li.selected:last-child {
+        border-bottom-color: ${dropdownSelectedBgColor};
+      }
 
-    ul.dropdown-main li a {
-      text-decoration: none;
-      display: block;
-      box-sizing: border-box;
-    }
+      ul.dropdown-main li.selected:first-child {
+        border-top-color: ${dropdownSelectedBgColor};
+      }
 
-    ul.dropdown-main li:first-child {
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
-    }
+      ul.dropdown-main li:hover > *,
+      ul.dropdown-main li:focus-within > * {
+        background-color: ${dropdownHoverBgColor};
+        color: var(--dropdownHoverTextColor, #fff);
+      }
 
-    ul.dropdown-main li:last-child {
-      border-bottom-right-radius: 4px;
-      border-bottom-left-radius: 4px;
-    }
+      ul.dropdown-main li.selected > * {
+        background-color: ${dropdownSelectedBgColor};
+        color: var(--dropdownSelectedTextColor, #2c2c2c);
+      }
 
-    /* cover the list with the label */
-    ul.dropdown-main li > * > :first-child {
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      align-content: center;
-      flex-wrap: nowrap;
-      height: 100%;
-      padding: 5px 10px;
-      box-sizing: border-box;
-    }
+      ul.dropdown-main li {
+        background: ${dropdownBgColor};
+        list-style: none;
+        height: 30px;
+        cursor: pointer;
+        border-bottom: 0.5px solid ${dropdownBgColor};
+        border-top: 0.5px solid ${dropdownBgColor};
+      }
 
-    ul.dropdown-main li > * {
-      width: 100%;
-      height: inherit;
-      color: var(--dropdownTextColor, #fff);
-      background: transparent;
-      padding: 0;
-    }
-  `;
+      ul.dropdown-main li button {
+        background: none;
+        color: inherit;
+        border: none;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+      }
+
+      ul.dropdown-main li a {
+        text-decoration: none;
+        display: block;
+        box-sizing: border-box;
+      }
+
+      ul.dropdown-main li:first-child {
+        border-top-left-radius: var(--dropdownBorderTopLeftRadius, 4px);
+        border-top-right-radius: var(--dropdownBorderTopRightRadius, 4px);
+      }
+
+      ul.dropdown-main li:last-child {
+        border-bottom-right-radius: var(--dropdownBorderBottomRightRadius, 4px);
+        border-bottom-left-radius: var(--dropdownBorderBottomLeftRadius, 4px);
+      }
+
+      /* cover the list with the label */
+      ul.dropdown-main li > * > :first-child {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        align-content: center;
+        flex-wrap: nowrap;
+        height: 100%;
+        padding: var(--dropdownItemPaddingTop, 5px)
+          var(--dropdownItemPaddingRight, 10px)
+          var(--dropdownItemPaddingBottom, 5px)
+          var(--dropdownItemPaddingLeft, 10px);
+        box-sizing: border-box;
+      }
+
+      ul.dropdown-main li > * {
+        width: 100%;
+        height: inherit;
+        color: ${dropdownTextColor};
+        background: transparent;
+        padding: 0;
+      }
+    `;
+  }
 }

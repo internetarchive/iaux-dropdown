@@ -313,7 +313,7 @@ export class IaDropdown extends LitElement {
         margin: var(--dropdownOffsetTop, 5px) 0 0 0;
         padding: 0;
         color: ${dropdownTextColor};
-        font-size: var(--dropdownFontSize, 1rem);
+        font-size: var(--dropdownFontSize, inherit);
 
         border-top: var(--dropdownBorderTopWidth, ${dropdownBorderWidth}) solid
           ${dropdownBorderColor};

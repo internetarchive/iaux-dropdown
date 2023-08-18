@@ -74,6 +74,14 @@ export class AppRoot extends LitElement {
    `;
   }
 
+  get iconUp(): string {
+    return `<svg height="10" viewBox="0 0 10 10" width="10" xmlns="http://www.w3.org/2000/svg"><path d="m5 3 5 5h-10z" fill="#2c2c2c" fill-rule="evenodd"/></svg>`
+  }
+
+  get iconDown(): string {
+    return `<svg height="10" viewBox="0 0 10 10" width="10" xmlns="http://www.w3.org/2000/svg"><path d="m5 8 5-5h-10z" fill="#2c2c2c" fill-rule="evenodd"/></svg>`
+  }
+
   private checkboxRowTemplate(options: {
     id: string;
     label: string;
@@ -158,6 +166,8 @@ export class AppRoot extends LitElement {
         ?closeOnSelect=${this.closeOnSelect}
         ?includeSelectedOption=${this.includeSelectedOption}
         selectedOption=${this.selectedOptionId}
+        buttonUp=${this.iconUp}
+        buttonDown=${this.iconDown}
         .options=${[
           {
             url: 'https://archive.org/details/inlibrary',

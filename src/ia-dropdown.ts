@@ -8,6 +8,7 @@ import {
   SVGTemplateResult,
 } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
+import {unsafeSVG} from 'lit/directives/unsafe-svg.js';
 
 export interface optionInterface {
   url?: string;
@@ -69,6 +70,18 @@ export class IaDropdown extends LitElement {
   @property({ type: String }) optionGroup: string = 'options';
 
   @property({ type: Function }) optionSelected = () => {};
+
+  @property({ type: String } ) buttonUp =
+    `<svg class="caret-up-svg" viewBox="0 0 8 4" xmlns="http://www.w3.org/2000/svg">
+     <path d="m6.7226499 3.51689722c.22976435.15317623.54019902.0910893.69337525-.13867505.13615665-.20423497.10222882-.47220946-.06836249-.63681849l-.07031256-.05655675-3.2773501-2.18490007-3.2773501 2.18490007c-.22976434.15317623-.29185128.4636109-.13867505.69337524.13615665.20423498.39656688.27598409.61412572.18182636l.07924953-.04315131 2.7226499-1.81402514z"
+     fill=""></path>
+     </svg>`;
+
+    @property({ type: String } ) buttonDown =
+      `<svg class="caret-down-svg" viewBox="0 0 8 4" xmlns="http://www.w3.org/2000/svg">
+       <path d="m6.7226499.58397485c.22976435-.15317623.54019902-.09108929.69337525.13867505.13615665.20423498.10222882.47220947-.06836249.63681849l-.07031256.05655676-3.2773501 2.18490006-3.2773501-2.18490006c-.22976434-.15317623-.29185128-.4636109-.13867505-.69337525.13615665-.20423497.39656688-.27598409.61412572-.18182636l.07924953.04315131 2.7226499 1.81402515z"
+       fill=""></path>
+       </svg>`;
 
   /**
    * In cases where both the main button and its caret are interactive, we don't
@@ -175,17 +188,15 @@ export class IaDropdown extends LitElement {
   }
 
   get caretUp(): SVGTemplateResult {
-    return svg`<svg class="caret-up-svg" viewBox="0 0 8 4" xmlns="http://www.w3.org/2000/svg">
-    <path d="m6.7226499 3.51689722c.22976435.15317623.54019902.0910893.69337525-.13867505.13615665-.20423497.10222882-.47220946-.06836249-.63681849l-.07031256-.05655675-3.2773501-2.18490007-3.2773501 2.18490007c-.22976434.15317623-.29185128.4636109-.13867505.69337524.13615665.20423498.39656688.27598409.61412572.18182636l.07924953-.04315131 2.7226499-1.81402514z"
-      fill=""></path>
-  </svg>`;
+    return svg`
+      ${unsafeSVG(this.buttonUp)}
+      `;
   }
 
   get caretDown(): SVGTemplateResult {
-    return svg`<svg class="caret-down-svg" viewBox="0 0 8 4" xmlns="http://www.w3.org/2000/svg">
-    <path d="m6.7226499.58397485c.22976435-.15317623.54019902-.09108929.69337525.13867505.13615665.20423498.10222882.47220947-.06836249.63681849l-.07031256.05655676-3.2773501 2.18490006-3.2773501-2.18490006c-.22976434-.15317623-.29185128-.4636109-.13867505-.69337525.13615665-.20423497.39656688-.27598409.61412572-.18182636l.07924953.04315131 2.7226499 1.81402515z"
-    fill=""></path>
-  </svg>`;
+    return svg`
+      ${unsafeSVG(this.buttonDown)}
+      `;
   }
 
   get availableOptions(): optionInterface[] {

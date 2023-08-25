@@ -74,6 +74,34 @@ export class AppRoot extends LitElement {
    `;
   }
 
+  get slottedCaretUp(): SVGTemplateResult {
+    return svg`<svg
+    slot="caret-up"
+    class="caret-up-svg"
+    style="height: 10px; width: 10px;"
+    height="10"
+    viewBox="0 0 10 10"
+    width="10"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="m5 3 5 5h-10z" fill="" fill-rule="evenodd" />
+  </svg>`;
+  }
+
+  get slottedCaretDown(): SVGTemplateResult {
+    return svg`<svg
+    slot="caret-down"
+    class="caret-down-svg"
+    style="height: 10px; width: 10px;"
+    height="10"
+    viewBox="0 0 10 10"
+    width="10"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="m5 8 5-5h-10z" fill="" fill-rule="evenodd" />
+  </svg>`;
+  }
+
   private checkboxRowTemplate(options: {
     id: string;
     label: string;
@@ -192,6 +220,54 @@ export class AppRoot extends LitElement {
       >
         <div slot="dropdown-label">${this.correctIcon}</div>
       </ia-dropdown>
+      <hr />
+      <section><h2>Testing slotted caret</h2></section>
+
+      <div class="slotted-test">
+        <ia-dropdown
+          class="slotted-caret"
+          ?displaycaret=${true}
+          ?openViaButton=${false}
+          ?openViaCaret=${true}
+          ?closeOnSelect=${false}
+          ?includeSelectedOption=${this.includeSelectedOption}
+          selectedOption=${this.selectedOptionId}
+          .options=${[
+            {
+              url: 'https://archive.org/details/inlibrary',
+              selectedHandler: (option: optionInterface) =>
+                this.onSelected(option),
+              label: html`<ia-icon-label>
+                <div slot="icon">${this.iconForDropdown}</div>
+                Archive.org/inlibrary
+              </ia-icon-label>`,
+              id: 'inlibrary',
+            } as optionInterface,
+            {
+              selectedHandler: (option: optionInterface) =>
+                this.onSelected(option),
+              label: html` <ia-icon-label
+                class="invert-icon-at-hover invert-icon-at-selected ${fooBarIsSelected
+                  ? 'selected'
+                  : ''}"
+              >
+                <div slot="icon">${this.iconForDropdown}</div>
+                Select this option
+              </ia-icon-label>`,
+              id: 'foo-bar',
+            } as optionInterface,
+            {
+              selectedHandler: (option: optionInterface) =>
+                this.onSelected(option),
+              label: html`<p>Third option, just a label</p>`,
+              id: 'bar-foo',
+            } as optionInterface,
+          ]}
+        >
+          <div class="list-title" slot="dropdown-label">My Lists</div>
+          ${this.slottedCaretUp} ${this.slottedCaretDown}
+        </ia-dropdown>
+      </div>
     `;
   }
 
@@ -221,6 +297,24 @@ export class AppRoot extends LitElement {
 
     ia-dropdown.light-bg {
       --dropdownCaretColor: #222;
+    }
+
+    div.list-title {
+      font-weight: 600;
+      color: #222;
+    }
+
+    .slotted-test {
+      padding: 10px 0 0 10px;
+      background-color: white;
+      height: auto;
+      width: 200px;
+    }
+
+    ia-dropdown.slotted-caret {
+      --dropdownCaretColor: #222;
+      --caretPadding: 0 0 6px 5px;
+      --dropdownListPosition: relative;
     }
 
     svg {

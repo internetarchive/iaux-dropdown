@@ -40,6 +40,13 @@ const options = [{
 - **`selectedOption`** is a string specifying the `id` of the currently-selected option (default: `''`)
 - **`optionGroup`** is a string describing the dropdown's purpose, accessible to screen-readers only (default: `'options'`)
 
+#### `<ia-dropdown>` slots
+- `slot="dropdown-label"` the main button that opens the dropdown menu.
+- `slot="caret-up"` replaces default up caret svg.
+  - Use both `slot="caret-up"` and `class="caret-up-svg"` in the `<svg>`.
+- `slot="caret-down"` replaces default down caret svg.
+  - Use both `slot="caret-down"` and `class="caret-down-svg"` in the `<svg>`.
+
 #### `<ia-dropdown>` CSS
 CSS Vars
 Primary:
@@ -64,6 +71,10 @@ Hover:
 - `var(--dropdownHoverBgColor, #fff)`
 - `var(--dropdownHoverTextColor, #2c2f2c)`
 - `var(--dropdownHoverTopBottomBorderColor, #333)`
+
+Dropdown list position:
+- `var(--dropdownListPosition, absolute)` (dropdown pops up over content)
+- `var(--dropdownListPosition, relative)` (dropdown accordians with content)
 
 Dropdown list z-index:
 - `var(--dropdownListZIndex, 1)`

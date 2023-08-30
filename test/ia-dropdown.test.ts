@@ -30,6 +30,31 @@ describe('IaDropdown', () => {
     expect(caret).to.exist;
   });
 
+  describe('Slotted caret', () => {
+    it('can display slotted caret', async () => {
+      const svgCaret = html`<svg
+        slot="caret-down"
+        class="caret-down-svg slotted"
+        style="height: 10px; width: 10px;"
+        height="10"
+        viewBox="0 0 10 10"
+        width="10"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="m5 8 5-5h-10z" fill="" fill-rule="evenodd" />
+      </svg>`;
+
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown displayCaret> ${svgCaret} </ia-dropdown>`
+      );
+
+      expect(el.displayCaret).to.be.true;
+
+      const caretDown = el.querySelector('.slotted') as HTMLElement;
+      expect(caretDown).to.exist;
+    });
+  });
+
   describe('Toggling', () => {
     it('has `toggleOptions` function to toggle open dropdown options', async () => {
       const el = await fixture<IaDropdown>(
@@ -49,9 +74,12 @@ describe('IaDropdown', () => {
       );
 
       expect(el.displayCaret).to.be.true;
-      const caret = el.shadowRoot?.querySelector('span.caret');
-      expect(caret?.querySelector('.caret-down-svg')).to.exist;
-      expect(caret?.querySelector('.caret-up-svg')).to.not.exist;
+      const caret = el.shadowRoot?.querySelector('span.caret') as HTMLElement;
+      const caretDown = caret?.querySelector('.caret-down-slot') as HTMLElement;
+      const caretUp = caret?.querySelector('.caret-up-slot') as HTMLElement;
+
+      expect(caretDown.hidden).to.be.false;
+      expect(caretUp.hidden).to.be.true;
 
       const trigger = el.shadowRoot?.querySelector('button.click-main');
       expect(trigger).to.exist;
@@ -60,8 +88,8 @@ describe('IaDropdown', () => {
 
       await el.updateComplete;
 
-      expect(caret?.querySelector('.caret-down-svg')).to.not.exist;
-      expect(caret?.querySelector('.caret-up-svg')).to.exist;
+      expect(caretDown.hidden).to.be.true;
+      expect(caretUp.hidden).to.be.false;
       expect(el.open).to.be.true;
     });
 

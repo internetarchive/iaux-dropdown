@@ -158,14 +158,6 @@ export class IaDropdown extends LitElement {
     }
   }
 
-  get caret(): SVGTemplateResult {
-    if (!this.open) {
-      return this.caretDown;
-    }
-
-    return this.caretUp;
-  }
-
   get dropdownState(): string {
     if (this.open) {
       return 'open';
@@ -215,7 +207,12 @@ export class IaDropdown extends LitElement {
                   @click=${this.caretClicked}
                   @keydown=${this.caretKeyDown}
                 >
-                  ${this.caret}
+                  <span ?hidden=${!this.open} class="caret-up-slot">
+                    <slot name="caret-up">${this.caretUp}</slot>
+                  </span>
+                  <span ?hidden=${this.open} class="caret-down-slot">
+                    <slot name="caret-down">${this.caretDown}</slot>
+                  </span>
                 </span>
               `
             : nothing}
@@ -244,7 +241,9 @@ export class IaDropdown extends LitElement {
       }
 
       svg.caret-up-svg,
-      svg.caret-down-svg {
+      svg.caret-down-svg,
+      ::slotted(svg.caret-up-svg),
+      ::slotted(svg.caret-down-svg) {
         fill: var(--dropdownCaretColor, #fff);
         vertical-align: middle;
       }
@@ -312,7 +311,7 @@ export class IaDropdown extends LitElement {
       }
 
       ul.dropdown-main {
-        position: absolute;
+        position: var(--dropdownListPosition, absolute);
         list-style: none;
         margin: var(--dropdownOffsetTop, 5px) 0 0 0;
         padding: 0;

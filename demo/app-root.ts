@@ -12,6 +12,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import '../src/ia-dropdown';
 import { optionInterface } from '../src/ia-dropdown';
 import '../src/ia-icon-label';
+import { userListTestData } from './user-lists';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -121,6 +122,36 @@ export class AppRoot extends LitElement {
         <label for=${options.id}>${options.label}</label>
       </div>
     `;
+  }
+
+  get userListOptions(): optionInterface[] {
+    const options: optionInterface[] = [];
+
+    const favoriteOptions: optionInterface = {
+      label: 'Favorites',
+      id: 'favorites',
+    };
+
+    options.push(favoriteOptions);
+
+    userListTestData.forEach(list => {
+      const option: optionInterface = {
+        label: this.checkboxRowTemplate({
+          id: list.id,
+          label: list.name,
+        }),
+        id: list.id,
+      };
+      options.push(option);
+    });
+
+    const createNewListOption: optionInterface = {
+      label: 'Create new list',
+      id: 'create-new-list',
+    };
+    options.push(createNewListOption);
+
+    return options;
   }
 
   render() {
@@ -268,6 +299,25 @@ export class AppRoot extends LitElement {
           ${this.slottedCaretUp} ${this.slottedCaretDown}
         </ia-dropdown>
       </div>
+
+      <hr />
+      <section><h2>Testing checkbox dropdown</h2></section>
+
+      <div class="checkbox-test">
+        <ia-dropdown
+          class="checkbox-dropdown"
+          ?displaycaret=${true}
+          ?openViaButton=${false}
+          ?openViaCaret=${true}
+          ?closeOnSelect=${false}
+          ?includeSelectedOption=${this.includeSelectedOption}
+          selectedOption=${this.selectedOptionId}
+          .options=${this.userListOptions}
+        >
+          <div class="list-title" slot="dropdown-label">My Lists</div>
+          ${this.slottedCaretUp} ${this.slottedCaretDown}
+        </ia-dropdown>
+      </div>
     `;
   }
 
@@ -304,7 +354,8 @@ export class AppRoot extends LitElement {
       color: #222;
     }
 
-    .slotted-test {
+    .slotted-test,
+    .checkbox-test {
       padding: 10px 0 0 10px;
       background-color: white;
       height: auto;

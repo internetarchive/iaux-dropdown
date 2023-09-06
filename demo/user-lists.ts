@@ -3,17 +3,25 @@ export interface userListInterface {
   decription: string;
   owner: string;
   isPrivate: boolean;
-  itemCount?: number;
+  items?: string[];
   id: string;
 }
 
 export const userListTestData: userListInterface[] = [
   {
+    name: 'Favorites',
+    decription: 'Your favorite items',
+    owner: '@user1',
+    isPrivate: false,
+    items: ['foo', 'bar', 'baz'],
+    id: '0',
+  },
+  {
     name: 'Silver age comics are the best',
     decription: 'List 1 description',
     owner: '@user1',
     isPrivate: true,
-    itemCount: 12,
+    items: ['Flash', 'Shadow', 'Spectre'],
     id: '1',
   },
   {
@@ -21,7 +29,7 @@ export const userListTestData: userListInterface[] = [
     decription: 'List 2 description',
     owner: '@user1',
     isPrivate: false,
-    itemCount: 0,
+    items: ['Bob', 'Betty', 'Bill'],
     id: '2',
   },
   {
@@ -29,7 +37,7 @@ export const userListTestData: userListInterface[] = [
     decription: 'List 3 description',
     owner: '@user2',
     isPrivate: true,
-    itemCount: 5,
+    items: ['this', 'that', 'the other'],
     id: '3',
   },
   {
@@ -37,7 +45,7 @@ export const userListTestData: userListInterface[] = [
     decription: 'List 4 description',
     owner: '@user1',
     isPrivate: false,
-    itemCount: 133,
+    items: ['Shadow', 'Flash', 'Honeymooners'],
     id: '4',
   },
 ];

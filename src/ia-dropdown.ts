@@ -70,6 +70,8 @@ export class IaDropdown extends LitElement {
 
   @property({ type: Function }) optionSelected = () => {};
 
+  @property({ type: Boolean, reflect: true }) isCustomList = false;
+
   /**
    * In cases where both the main button and its caret are interactive, we don't
    * want a click on the caret to trigger effects on both. However, stopping
@@ -190,6 +192,13 @@ export class IaDropdown extends LitElement {
     );
   }
 
+  get dropdownFormat(): TemplateResult {
+    if (this.isCustomList) {
+      return html`<slot name="menu-slot"></slot>`;
+    }
+    return html`${this.availableOptions.map(o => this.renderOption(o))}`;
+  }
+
   render() {
     return html`
       <div class="ia-dropdown-group">
@@ -219,7 +228,7 @@ export class IaDropdown extends LitElement {
         </button>
 
         <ul class="dropdown-main ${this.dropdownState}">
-          ${this.availableOptions.map(o => this.renderOption(o))}
+          ${this.dropdownFormat}
         </ul>
       </div>
     `;

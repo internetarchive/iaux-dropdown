@@ -7,7 +7,7 @@ export class IaIconLabel extends LitElement {
     return html`
       <div class="icon-label-container">
         <slot name="icon"></slot>
-        <slot></slot>
+        <slot class="label"></slot>
       </div>
     `;
   }
@@ -52,6 +52,18 @@ export class IaIconLabel extends LitElement {
       align-content: center;
       flex-wrap: nowrap;
       height: 100%;
+    }
+
+    slot.label {
+      width: 80px;
+      text-align: left;
+      display: flex;
+      -webkit-line-clamp: 2;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      word-wrap: break-word; /* Important for long words! */
     }
   `;
 }

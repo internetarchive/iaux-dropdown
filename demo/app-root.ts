@@ -12,7 +12,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import '../src/ia-dropdown';
 import { optionInterface } from '../src/ia-dropdown';
 import '../src/ia-icon-label';
-import { userListTestData } from './user-lists';
+import './user-list-menu';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -122,36 +122,6 @@ export class AppRoot extends LitElement {
         <label for=${options.id}>${options.label}</label>
       </div>
     `;
-  }
-
-  get userListOptions(): optionInterface[] {
-    const options: optionInterface[] = [];
-
-    const favoriteOptions: optionInterface = {
-      label: 'Favorites',
-      id: 'favorites',
-    };
-
-    options.push(favoriteOptions);
-
-    userListTestData.forEach(list => {
-      const option: optionInterface = {
-        label: this.checkboxRowTemplate({
-          id: list.id,
-          label: list.name,
-        }),
-        id: list.id,
-      };
-      options.push(option);
-    });
-
-    const createNewListOption: optionInterface = {
-      label: 'Create new list',
-      id: 'create-new-list',
-    };
-    options.push(createNewListOption);
-
-    return options;
   }
 
   render() {
@@ -303,22 +273,26 @@ export class AppRoot extends LitElement {
       <hr />
       <section><h2>Testing checkbox dropdown</h2></section>
 
-      <div class="checkbox-test">
+      <div class="list-test">
         <ia-dropdown
-          class="checkbox-dropdown"
+          class="list-dropdown"
           ?displaycaret=${true}
-          ?openViaButton=${false}
-          ?openViaCaret=${true}
-          ?closeOnSelect=${false}
-          ?includeSelectedOption=${this.includeSelectedOption}
-          selectedOption=${this.selectedOptionId}
-          .options=${this.userListOptions}
+          ?openViaButton=${true}
+          ?openViaCaret=${false}
+          ?closeOnSelect=${true}
+          ?includeSelectedOption=${true}
+          ?isCustomList=${true}
         >
           <div class="list-title" slot="dropdown-label">My Lists</div>
-          ${this.slottedCaretUp} ${this.slottedCaretDown}
+          <user-list-menu slot="menu-slot"></user-list-menu>
         </ia-dropdown>
       </div>
     `;
+  }
+
+  onListClick(option: optionInterface) {
+    console.log('**** OPTION ', option);
+    this.selectedOption = option;
   }
 
   onSelected(option: optionInterface) {
@@ -355,11 +329,24 @@ export class AppRoot extends LitElement {
     }
 
     .slotted-test,
-    .checkbox-test {
+    .list-test {
       padding: 10px 0 0 10px;
       background-color: white;
       height: auto;
       width: 200px;
+    }
+
+    div.list-test {
+      height: 300px;
+    }
+
+    .list-test {
+      --dropdownBgColor: #fff;
+      --dropdownItemPaddingRight: 0;
+      --dropdownItemPaddingLeft: 2px;
+      --dropdownBorderColor: blue;
+      --iconLabelGutterWidth: 4px;
+      --iconWidth: 10px;
     }
 
     ia-dropdown.slotted-caret {

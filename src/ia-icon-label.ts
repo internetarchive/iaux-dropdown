@@ -40,6 +40,7 @@ export class IaIconLabel extends LitElement {
       justify-content: flex-start;
       align-content: center;
       flex-wrap: nowrap;
+      flex-direction: var(--iconLabelFlexDirection, row);
       height: 100%;
     }
 
@@ -55,7 +56,7 @@ export class IaIconLabel extends LitElement {
     }
 
     slot.label {
-      width: 80px;
+      width: var(--labelWidth, 100%);
       text-align: left;
       display: flex;
       -webkit-line-clamp: 2;

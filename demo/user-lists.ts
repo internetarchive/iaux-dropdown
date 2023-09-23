@@ -9,11 +9,11 @@ export interface userListInterface {
 
 export const userListTestData: userListInterface[] = [
   {
-    name: 'Favorites',
-    decription: 'Your favorite items',
+    name: 'A very long list name that will wrap to the next line and then some',
+    decription: 'Was: Your favorite items',
     owner: '@user1',
     isPrivate: false,
-    items: ['foo', 'bar', 'baz'],
+    items: ['foo', 'bar', 'Flash'],
     id: '0',
   },
   {
@@ -37,7 +37,7 @@ export const userListTestData: userListInterface[] = [
     decription: 'List 3 description',
     owner: '@user2',
     isPrivate: true,
-    items: ['this', 'that', 'the other'],
+    items: ['this', 'that', 'the other', 'Flash'],
     id: '3',
   },
   {

@@ -7,7 +7,7 @@ export class IaIconLabel extends LitElement {
     return html`
       <div class="icon-label-container">
         <slot name="icon"></slot>
-        <slot class="label"></slot>
+        <slot></slot>
       </div>
     `;
   }
@@ -55,16 +55,30 @@ export class IaIconLabel extends LitElement {
       height: 100%;
     }
 
-    slot.label {
+    /* https://css-tricks.com/flexbox-truncated-text/ */
+    ::slotted(div.truncate) {
       width: var(--labelWidth, 100%);
       text-align: left;
-      display: flex;
-      -webkit-line-clamp: 2;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
       word-wrap: break-word; /* Important for long words! */
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @supports not (-webkit-line-clamp: 2) {
+      ::slotted(div.truncate) {
+        white-space: nowrap;
+        min-width: 0;
+      }
+    }
+    @supports (-webkit-line-clamp: 2) {
+      ::slotted(div.truncate) {
+        min-width: 0;
+        display: -webkit-box;
+        overflow-wrap: break-word;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        -webkit-box-pack: end;
+      }
     }
   `;
 }

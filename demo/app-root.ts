@@ -12,7 +12,7 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import '../src/ia-dropdown';
 import { optionInterface } from '../src/ia-dropdown';
 import '../src/ia-icon-label';
-import './user-list-menu';
+import './item-userlists';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -322,12 +322,12 @@ export class AppRoot extends LitElement {
       </div>
 
       <hr />
-      <section><h2>Testing checkbox dropdown</h2></section>
+      <section><h2>Testing userlist check dropdown</h2></section>
 
       <div class="list-test">
         <ia-dropdown
           class="list-dropdown"
-          ?displaycaret=${true}
+          ?displaycaret=${false}
           ?openViaButton=${true}
           ?openViaCaret=${false}
           ?closeOnSelect=${true}
@@ -337,7 +337,7 @@ export class AppRoot extends LitElement {
           <div class="list-title" slot="dropdown-label">
             ${this.addButton(this.hasList)}
           </div>
-          <user-list-menu slot="menu-slot"></user-list-menu>
+          <item-userlists slot="menu-slot"></item-userlists>
         </ia-dropdown>
       </div>
     `;
@@ -398,8 +398,26 @@ export class AppRoot extends LitElement {
       --dropdownItemPaddingRight: 0;
       --dropdownItemPaddingLeft: 2px;
       --dropdownBorderColor: blue;
+      --dropdownBorderWidth: 2px;
       --iconLabelGutterWidth: 4px;
       --iconWidth: 10px;
+      --dropdownOffsetTop: 2px;
+    }
+
+    button:hover {
+      /* 10% 234 */
+      background-color: /* #eaeaea */ rgba(44, 44, 44, 0.1);
+    }
+
+    button:focus,
+    button:focus-visible {
+      /* 20% */
+      background-color: /* #d5d5d5 */ rgba(44, 44, 44, 0.3);
+    }
+
+    button:active {
+      /* 30% */
+      background-color: /* #c0c0c0 */ rgba(44, 44, 44, 0.3);
     }
 
     ia-dropdown.slotted-caret {
@@ -414,6 +432,7 @@ export class AppRoot extends LitElement {
       --iconWidth: 17.5px;
       background-color: #fff;
       padding: 5px 5px;
+      border: 2px solid #2c2c2c;
     }
 
     svg {

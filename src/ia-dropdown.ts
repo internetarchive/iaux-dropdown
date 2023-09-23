@@ -7,7 +7,7 @@ import {
   svg,
   SVGTemplateResult,
 } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, query } from 'lit/decorators.js';
 
 export interface optionInterface {
   url?: string;
@@ -71,6 +71,8 @@ export class IaDropdown extends LitElement {
   @property({ type: Function }) optionSelected = () => {};
 
   @property({ type: Boolean, reflect: true }) isCustomList = false;
+
+  @query('.click-main') mainButton!: HTMLButtonElement;
 
   /**
    * In cases where both the main button and its caret are interactive, we don't

@@ -85,7 +85,7 @@ export class ItemUserlists extends LitElement {
       const listOption = {
         label: html` <ia-icon-label>
           <div slot="icon">${this.checkedIcon(list)}</div>
-          <div class="label">${list.name}</div>
+          <div class="truncate">${list.name}</div>
         </ia-icon-label>`,
         id: list.id,
         selectedHandler: (option: optionInterface) => this.onSelected(option),
@@ -110,7 +110,9 @@ export class ItemUserlists extends LitElement {
   }
 
   render() {
-    return html` ${this.userListOptions.map(o => this.renderOption(o))} `;
+    return html`
+      ${this.userListOptions.map((o, index) => this.renderOption(o, index))}
+    `;
   }
 
   static get styles() {

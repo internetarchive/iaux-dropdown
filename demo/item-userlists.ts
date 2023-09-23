@@ -110,9 +110,7 @@ export class ItemUserlists extends LitElement {
   }
 
   render() {
-    return html`
-      ${this.userListOptions.map((o, index) => this.renderOption(o, index))}
-    `;
+    return html` ${this.userListOptions.map(o => this.renderOption(o))} `;
   }
 
   static get styles() {

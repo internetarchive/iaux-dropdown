@@ -74,6 +74,13 @@ export class IaDropdown extends LitElement {
 
   @query('.click-main') mainButton!: HTMLButtonElement;
 
+  async firstUpdated(): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    this.addEventListener('closeDropdown', () => {
+      this.open = false;
+    });
+  }
+
   /**
    * In cases where both the main button and its caret are interactive, we don't
    * want a click on the caret to trigger effects on both. However, stopping
@@ -204,7 +211,13 @@ export class IaDropdown extends LitElement {
   render() {
     return html`
       <div class="ia-dropdown-group">
-        <button @click=${this.mainButtonClicked} class="click-main">
+        <button
+          @click=${this.mainButtonClicked}
+          class="click-main"
+          @keydown=${(e: KeyboardEvent) => {
+            if (e.key === 'Escape') this.open = false;
+          }}
+        >
           <span class="cta sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
           ${this.displayCaret

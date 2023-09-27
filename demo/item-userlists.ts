@@ -8,7 +8,10 @@ import {
 } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import '../src/ia-icon-label';
-import { userListInterface, userListTestData } from './user-lists';
+import {
+  userlistDataInterface,
+  userlistTestData,
+} from './item-userlists-model';
 
 interface optionInterface {
   selectedHandler?: Function;
@@ -71,8 +74,8 @@ export class ItemUserlists extends LitElement {
     option.selectedHandler?.(option);
   }
 
-  private checkedIcon(list: userListInterface): TemplateResult {
-    if (list.items?.includes(this.identifier)) {
+  private checkedIcon(list: userlistDataInterface): TemplateResult {
+    if (list.item_is_member) {
       return html`${this.checkIcon}`;
     }
     return html`&nbsp;`;
@@ -81,7 +84,7 @@ export class ItemUserlists extends LitElement {
   get userListOptions(): optionInterface[] {
     const options: optionInterface[] = [];
 
-    userListTestData.forEach(list => {
+    userlistTestData.forEach(list => {
       const listOption = {
         label: html` <ia-icon-label>
           <div slot="icon">${this.checkedIcon(list)}</div>

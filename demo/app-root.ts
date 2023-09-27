@@ -32,8 +32,6 @@ export class AppRoot extends LitElement {
 
   @state() private includeSelectedOption: boolean = false;
 
-  @state() private hasList: boolean = false;
-
   @query('#display-caret-check')
   private displayCaretCheck!: HTMLInputElement;
 
@@ -217,14 +215,6 @@ export class AppRoot extends LitElement {
           this.includeSelectedOption = this.includeSelectedOptionCheck.checked;
         },
       })}
-      ${this.checkboxRowTemplate({
-        id: 'has-list',
-        label: 'Item has list(s)',
-        isChecked: this.hasList,
-        onChange: () => {
-          this.hasList = this.hasListCheck.checked;
-        },
-      })}
 
       <button class="change-color" @click=${() => this.changeColors()}>
         change colors
@@ -335,7 +325,7 @@ export class AppRoot extends LitElement {
           ?isCustomList=${true}
         >
           <div class="list-title" slot="dropdown-label">
-            ${this.addButton(this.hasList)}
+            ${this.addButton(true)}
           </div>
           <item-userlists slot="menu-slot"></item-userlists>
         </ia-dropdown>

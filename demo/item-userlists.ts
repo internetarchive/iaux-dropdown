@@ -8,12 +8,9 @@ import {
 } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import '../src/ia-icon-label';
-import {
-  userlistDataInterface,
-  userlistTestData,
-} from './item-userlists-model';
+import { userlistDataInterface } from './item-userlists-model';
 
-interface optionInterface {
+interface userlistOptionInterface {
   selectedHandler?: Function;
   label: string | TemplateResult;
   id: string;
@@ -26,6 +23,11 @@ export class ItemUserlists extends LitElement {
    * Item identifier
    */
   @property({ type: String }) identifier = 'Flash';
+
+  /**
+   * List of item userlists
+   */
+  @property({ type: Array }) lists: userlistDataInterface[] = [];
 
   get checkIcon(): SVGTemplateResult {
     return svg`<svg viewBox="0 0 100 100"
@@ -52,7 +54,7 @@ export class ItemUserlists extends LitElement {
   </svg>`;
   }
 
-  renderOption(option: optionInterface): TemplateResult {
+  renderOption(option: userlistOptionInterface): TemplateResult {
     const { label, isSelected, id } = option;
     const selected = isSelected ? 'selected' : '';
     const component = html`<button
@@ -65,7 +67,7 @@ export class ItemUserlists extends LitElement {
     return html`<li class=${selected}>${component}</li>`;
   }
 
-  optionClicked(option: optionInterface): void {
+  optionClicked(option: userlistOptionInterface): void {
     this.dispatchEvent(
       new CustomEvent('optionSelected', {
         detail: { option },
@@ -74,29 +76,31 @@ export class ItemUserlists extends LitElement {
     option.selectedHandler?.(option);
   }
 
-  private checkedIcon(list: userlistDataInterface): TemplateResult {
-    if (list.item_is_member) {
+  private checkedIcon(checked: boolean): TemplateResult {
+    if (checked) {
       return html`${this.checkIcon}`;
     }
     return html`&nbsp;`;
   }
 
-  get userListOptions(): optionInterface[] {
-    const options: optionInterface[] = [];
+  // Convert userlist data into a list of options
+  get userListOptions(): userlistOptionInterface[] {
+    const options: userlistOptionInterface[] = [];
 
-    userlistTestData.forEach(list => {
+    this.lists.forEach(list => {
       const listOption = {
         label: html` <ia-icon-label>
-          <div slot="icon">${this.checkedIcon(list)}</div>
+          <div slot="icon">${this.checkedIcon(list.item_is_member)}</div>
           <div class="truncate">${list.name}</div>
         </ia-icon-label>`,
         id: list.id,
-        selectedHandler: (option: optionInterface) => this.onSelected(option),
-      } as optionInterface;
+        selectedHandler: (option: userlistOptionInterface) =>
+          this.onSelected(option),
+      } as userlistOptionInterface;
       options.push(listOption);
     });
 
-    const createNewListOption: optionInterface = {
+    const createNewListOption: userlistOptionInterface = {
       label: html`<ia-icon-label>
         <div slot="icon">${this.addIcon}</div>
         Create new list
@@ -108,7 +112,7 @@ export class ItemUserlists extends LitElement {
     return options;
   }
 
-  onSelected(option: optionInterface): void {
+  onSelected(option: userlistOptionInterface): void {
     console.log('onSelected', option);
   }
 

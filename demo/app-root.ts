@@ -54,9 +54,6 @@ export class AppRoot extends LitElement {
   @query('#include-selected-option')
   private includeSelectedOptionCheck!: HTMLInputElement;
 
-  @query('#has-list')
-  private hasListCheck!: HTMLInputElement;
-
   constructor() {
     super();
     // Copy sample userlist data
@@ -165,16 +162,16 @@ export class AppRoot extends LitElement {
     `;
   }
 
-  private addButton(checked: boolean): TemplateResult {
+  private mainButton(checked: boolean): TemplateResult {
     return html`
-      <button class="action-bar-text">
+      <div class="action-bar-text">
         <ia-icon-label>
           <div slot="icon" class="icon-img">
             ${checked ? this.checkIcon : this.addIcon}
           </div>
           <div>Add Item to List</div>
         </ia-icon-label>
-      </button>
+      </div>
     `;
   }
 
@@ -347,7 +344,7 @@ export class AppRoot extends LitElement {
           ?isCustomList=${true}
         >
           <div class="list-title" slot="dropdown-label">
-            ${this.addButton(true)}
+            ${this.mainButton(true)}
           </div>
           ${this.itemUserlists}
         </ia-dropdown>
@@ -414,20 +411,21 @@ export class AppRoot extends LitElement {
       --iconLabelGutterWidth: 4px;
       --iconWidth: 10px;
       --dropdownOffsetTop: 2px;
+      --buttonSlotPaddingRight: 0;
+      --dropdownMainButtonFlexDirection: column;
+      --dropdownMainButtonPadding: 5px 5px;
+      --iconLabelGutterWidth: 0;
+      --iconWidth: 17.5px;
+      --dropdownMainButtonBorder: 2px solid #2c2c2c;
+      --dropdownMainButtonBorderRadius: 3px;
     }
 
-    button:hover {
-      /* 10% 234 */
+    .list-title button:hover {
+      /* 10% */
       background-color: /* #eaeaea */ rgba(44, 44, 44, 0.1);
     }
 
-    button:focus,
-    button:focus-visible {
-      /* 20% */
-      background-color: /* #d5d5d5 */ rgba(44, 44, 44, 0.3);
-    }
-
-    button:active {
+    .list-title button:active {
       /* 30% */
       background-color: /* #c0c0c0 */ rgba(44, 44, 44, 0.3);
     }
@@ -438,13 +436,15 @@ export class AppRoot extends LitElement {
       --dropdownListPosition: relative;
     }
 
+    /* inside button.click-main, classname from details.inc buttons */
     .action-bar-text {
       --iconLabelFlexDirection: column;
       --iconLabelGutterWidth: 0;
       --iconWidth: 17.5px;
       background-color: #fff;
-      padding: 5px 5px;
-      border: 2px solid #2c2c2c;
+      /* for long text, thin L/R padding */
+      padding: 2px 1px;
+      font-weight: normal;
     }
 
     svg {

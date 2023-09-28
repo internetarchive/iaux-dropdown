@@ -276,18 +276,20 @@ export class IaDropdown extends LitElement {
         background: transparent;
         color: inherit;
         padding: var(--dropdownMainButtonPadding, 0px);
-        border: none;
+        border: var(--dropdownMainButtonBorder, none);
+        border-radius: var(--dropdownMainButtonBorderRadius, none);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         align-content: center;
         flex-wrap: nowrap;
-        flex-direction: row;
+        flex-direction: var(--dropdownMainButtonFlexDirection, row);
       }
 
       button slot {
-        padding-right: 5px;
+        /* Set var to 0px for column layout */
+        padding-right: var(--buttonSlotPaddingRight, 5px);
         display: inline-block;
       }
 

@@ -36,6 +36,9 @@ export class AppRoot extends LitElement {
 
   @state() private includeSelectedOption: boolean = false;
 
+  // Count for main button icon state
+  @state() private selectedCount: number = 0;
+
   // Data for userlist dropdown
   @state() private userlistData: userlistDataInterface[] = [];
 
@@ -58,6 +61,20 @@ export class AppRoot extends LitElement {
     super();
     // Copy sample userlist data
     this.userlistData = userlistTestData.map(item => item);
+
+    // Initialize selected count for main button icon state
+    this.selectedCount = this.userlistData.filter(
+      item => item.item_is_member
+    ).length;
+
+    // Listen for closeDropdown event from item-userlists
+    const eventListener = (e: CustomEvent) => {
+      this.selectedCount = e.detail.selected as number;
+      // Set selected count for main button icon state
+      console.log('Selected count: ', e.detail.selected);
+    };
+    // eslint-disable-next-line no-undef
+    this.addEventListener('selectDropdown', eventListener as EventListener);
   }
 
   get correctIcon(): SVGTemplateResult {
@@ -100,7 +117,7 @@ export class AppRoot extends LitElement {
   </svg>`;
   }
 
-  get addIcon(): SVGTemplateResult {
+  get plusIcon(): SVGTemplateResult {
     return svg`<svg
       viewBox="0 0 100 100"
       xmlns="http://www.w3.org/2000/svg"
@@ -162,12 +179,12 @@ export class AppRoot extends LitElement {
     `;
   }
 
-  private mainButton(checked: boolean): TemplateResult {
+  get mainButton(): TemplateResult {
     return html`
       <div class="action-bar-text">
         <ia-icon-label>
           <div slot="icon" class="icon-img">
-            ${checked ? this.checkIcon : this.addIcon}
+            ${this.selectedCount > 0 ? this.checkIcon : this.plusIcon}
           </div>
           <div>Add Item to List</div>
         </ia-icon-label>
@@ -343,18 +360,11 @@ export class AppRoot extends LitElement {
           ?includeSelectedOption=${true}
           ?isCustomList=${true}
         >
-          <div class="list-title" slot="dropdown-label">
-            ${this.mainButton(true)}
-          </div>
+          <div class="list-title" slot="dropdown-label">${this.mainButton}</div>
           ${this.itemUserlists}
         </ia-dropdown>
       </div>
     `;
-  }
-
-  onListClick(option: optionInterface) {
-    console.log('**** OPTION ', option);
-    this.selectedOption = option;
   }
 
   onSelected(option: optionInterface) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   html,
   css,
@@ -16,7 +17,11 @@ interface userlistOptionInterface {
   id: string;
   isSelected?: boolean;
 }
-
+/**
+ * Component to display a list of userlists
+ * Used in ia-dropdown component
+ * to have different type and behavior of options
+ */
 @customElement('item-userlists')
 export class ItemUserlists extends LitElement {
   /**
@@ -28,6 +33,14 @@ export class ItemUserlists extends LitElement {
    * List of item userlists
    */
   @property({ type: Array }) lists: userlistDataInterface[] = [];
+
+  // Set up Escape key listener after render
+  async firstUpdated(): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      this.onKeydown(e);
+    });
+  }
 
   get checkIcon(): SVGTemplateResult {
     return svg`<svg viewBox="0 0 100 100"
@@ -41,7 +54,7 @@ export class ItemUserlists extends LitElement {
   </svg>`;
   }
 
-  get addIcon(): SVGTemplateResult {
+  get plusIcon(): SVGTemplateResult {
     return svg`<svg
       viewBox="0 0 100 100"
       xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +67,7 @@ export class ItemUserlists extends LitElement {
   </svg>`;
   }
 
-  renderOption(option: userlistOptionInterface): TemplateResult {
+  renderUserlistOption(option: userlistOptionInterface): TemplateResult {
     const { label, isSelected, id } = option;
     const selected = isSelected ? 'selected' : '';
     const component = html`<button
@@ -80,7 +93,7 @@ export class ItemUserlists extends LitElement {
     if (checked) {
       return html`${this.checkIcon}`;
     }
-    return html`&nbsp;`;
+    return html`<div style="width: 12px; height: 12px;"></div>`;
   }
 
   // Convert userlist data into a list of options
@@ -102,22 +115,63 @@ export class ItemUserlists extends LitElement {
 
     const createNewListOption: userlistOptionInterface = {
       label: html`<ia-icon-label>
-        <div slot="icon">${this.addIcon}</div>
+        <div slot="icon">${this.plusIcon}</div>
         Create new list
       </ia-icon-label>`,
       id: 'create-new-list',
+      selectedHandler: (option: userlistOptionInterface) =>
+        this.onSelected(option),
     };
     options.push(createNewListOption);
 
     return options;
   }
 
-  onSelected(option: userlistOptionInterface): void {
+  private onKeydown(e: KeyboardEvent): void {
+    if (e.key === 'Escape') {
+      this.closeDropdown();
+    }
+  }
+
+  private onSelected(option: userlistOptionInterface): void {
+    let selectedCount = 0;
+    /* above disable no-param-reassign */
+    this.lists = this.lists.map(list => {
+      if (list.id === option.id) {
+        list.item_is_member = !list.item_is_member;
+      }
+      if (list.item_is_member) {
+        selectedCount += 1;
+      }
+      return list;
+    });
+
+    this.dispatchEvent(
+      new CustomEvent('selectDropdown', {
+        detail: { selected: selectedCount },
+        bubbles: true,
+        composed: true,
+      })
+    );
     console.log('onSelected', option);
+    this.closeDropdown();
+  }
+
+  private closeDropdown(): void {
+    this.dispatchEvent(
+      new CustomEvent('closeDropdown', {
+        bubbles: true,
+        composed: true,
+      })
+    );
+    // Clean up Escape key listener
+    document.removeEventListener('keydown', this.onKeydown);
   }
 
   render() {
-    return html` ${this.userListOptions.map(o => this.renderOption(o))} `;
+    return html`
+      ${this.userListOptions.map(o => this.renderUserlistOption(o))}
+    `;
   }
 
   static get styles() {

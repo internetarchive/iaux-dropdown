@@ -125,7 +125,8 @@ export class ItemUserlists extends LitElement {
     return options;
   }
 
-  private onKeydown(e: KeyboardEvent): void {
+  // Arrow function to maintain desired `this` binding
+  private onKeydown = (e: KeyboardEvent): void => {
     if (e.key === 'Escape') {
       this.closeDropdown();
     }

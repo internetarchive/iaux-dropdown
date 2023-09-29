@@ -30,15 +30,27 @@ const options = [{
 
 #### `<ia-dropdown>` public properties
 
-- **`open`** controls whether the dropdown menu is currently visible (default: `false`)
-- **`displayCaret`** controls whether the dropdown caret should be present (default: `false`)
-- **`closeOnSelect`** controls whether selecting an option in the dropdown menu should close it (default: `false`)
-- **`openViaButton`** controls whether clicking on the main button (not including the caret) should open the dropdown menu (default: `true`)
-- **`openViaCaret`** controls whether clicking on the main button's caret (if present) should open the dropdown menu (default: `true`)
-- **`includeSelectedOption`** controls whether the currently-selected option is included in the dropdown menu (default: `false`)
+- **`open`** controls whether the dropdown menu is currently visible
+  - default: `false`
+- **`displayCaret`** controls whether the dropdown caret should be present
+  - default: `false`
+- **`closeOnSelect`** controls whether selecting an option in the dropdown menu should close it
+  - default: `false`
+- **`openViaButton`** controls whether clicking on the main button (not including the caret) should open the dropdown menu
+  - default: `true`
+- **`openViaCaret`** controls whether clicking on the main button's caret (if present) should open the dropdown menu
+  - default: `true`
+- **`includeSelectedOption`** controls whether the currently-selected option is included in the dropdown menu
+  - default: `false`
 - **`options`** specifies the list of items available in the dropdown menu, using the structure shown above. Only `id` and `label` are required.
-- **`selectedOption`** is a string specifying the `id` of the currently-selected option (default: `''`)
-- **`optionGroup`** is a string describing the dropdown's purpose, accessible to screen-readers only (default: `'options'`)
+  - default: `[]`
+  - Other menu option types can be used by setting `isCustomList` to `true` and using the `menu-slot` slot with a custom list component.
+- **`selectedOption`** is a string specifying the `id` of the currently-selected option
+  - default: `''`
+- **`optionGroup`** is a string describing the dropdown's purpose, accessible to screen-readers only
+  - default: `options`
+-  **`isCustomList`** replaces default option list with slot `menu-slot` allowing a custom list component to be used with different option type and behavior
+   - default: `false`
 
 #### `<ia-dropdown>` slots
 - `slot="dropdown-label"` the main button that opens the dropdown menu.
@@ -46,6 +58,13 @@ const options = [{
   - Use both `slot="caret-up"` and `class="caret-up-svg"` in the `<svg>`.
 - `slot="caret-down"` replaces default down caret svg.
   - Use both `slot="caret-down"` and `class="caret-down-svg"` in the `<svg>`.
+- `slot="menu-slot"` allows replacing default dropdown menu option type and behavior.
+
+#### `<ia-dropdown>` events
+Listens for:
+- `closeDropdown` closes the dropdown menu
+Dispatches:
+- `optionSelected` when an option is selected in the dropdown menu
 
 #### `<ia-dropdown>` CSS
 CSS Vars
@@ -103,6 +122,11 @@ ex.
 </ia-icon-label>
 ```
 
+Child Classes
+- `truncate`
+  - applies `text-overflow: ellipsis` to text in children of unnamed slot which use this class
+  - applies `-webkit-line-clamp: 2` if supported by browser
+
 CSS Vars
 - `var(--iconWidth, 20px)`
 - `var(--iconHeight, 20px)`
@@ -112,7 +136,7 @@ CSS Vars
 - `var(--selectedBgColor, #fff)`
 - `var(--selectedTextColor, #2c2c2c)`
 - `var(--iconLabelGutterWidth, 10px)`
-
+- `var(--iconLabelFlexDirection, row)` (setting to `column` allows vertical layout)
 
 ## Local Demo with `web-dev-server`
 ```bash

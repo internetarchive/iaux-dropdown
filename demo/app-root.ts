@@ -60,7 +60,7 @@ export class AppRoot extends LitElement {
   constructor() {
     super();
     // Copy sample userlist data
-    this.userlistData = userlistTestData.map(item => item);
+    this.userlistData = [...userlistTestData];
 
     // Initialize selected count for main button icon state
     this.selectedCount = this.userlistData.filter(

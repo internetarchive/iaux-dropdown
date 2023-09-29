@@ -37,9 +37,7 @@ export class ItemUserlists extends LitElement {
   // Set up Escape key listener after render
   async firstUpdated(): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 0));
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      this.onKeydown(e);
-    });
+    document.addEventListener(this.onKeydown);
   }
 
   get checkIcon(): SVGTemplateResult {

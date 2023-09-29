@@ -187,6 +187,7 @@ export class AppRoot extends LitElement {
             ${this.selectedCount > 0 ? this.checkIcon : this.plusIcon}
           </div>
           <div class="label">Add Item to List</div>
+          <div class="label-sm">Lists</div>
         </ia-icon-label>
       </div>
     `;
@@ -455,19 +456,22 @@ export class AppRoot extends LitElement {
     }
 
     /* inside button.click-main, classname from details.inc buttons */
-    @media only screen and (min-width: 768px) {
+    @media (min-width: 768px) {
       .action-bar-text {
         /* for long text, thin L/R padding */
         padding: 2px 1px;
       }
+
+      .action-bar-text .label-sm {
+        display: none;
+      }
     }
 
-    @media only screen and (max-width: 767px) {
+    @media (max-width: 767px) {
       .action-bar-text {
-        padding: 0px 2px 12px 2px;
-        width: 20px;
-        height: 26px;
+        padding: 2px 2px;
       }
+
       .action-bar-text .label {
         display: none;
       }

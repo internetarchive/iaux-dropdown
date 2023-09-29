@@ -186,7 +186,7 @@ export class AppRoot extends LitElement {
           <div slot="icon" class="icon-img">
             ${this.selectedCount > 0 ? this.checkIcon : this.plusIcon}
           </div>
-          <div>Add Item to List</div>
+          <div class="label">Add Item to List</div>
         </ia-icon-label>
       </div>
     `;
@@ -446,15 +446,31 @@ export class AppRoot extends LitElement {
       --dropdownListPosition: relative;
     }
 
-    /* inside button.click-main, classname from details.inc buttons */
     .action-bar-text {
+      font-weight: normal;
       --iconLabelFlexDirection: column;
       --iconLabelGutterWidth: 0;
       --iconWidth: 17.5px;
       background-color: #fff;
-      /* for long text, thin L/R padding */
-      padding: 2px 1px;
-      font-weight: normal;
+    }
+
+    /* inside button.click-main, classname from details.inc buttons */
+    @media only screen and (min-width: 768px) {
+      .action-bar-text {
+        /* for long text, thin L/R padding */
+        padding: 2px 1px;
+      }
+    }
+
+    @media only screen and (max-width: 767px) {
+      .action-bar-text {
+        padding: 0px 2px 12px 2px;
+        width: 20px;
+        height: 26px;
+      }
+      .action-bar-text .label {
+        display: none;
+      }
     }
 
     svg {

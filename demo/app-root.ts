@@ -67,7 +67,7 @@ export class AppRoot extends LitElement {
       item => item.item_is_member
     ).length;
 
-    // Listen for closeDropdown event from item-userlists
+    // Listen for select Dropdown event from item-userlists
     const eventListener = (e: CustomEvent) => {
       this.selectedCount = e.detail.selected as number;
       // Set selected count for main button icon state

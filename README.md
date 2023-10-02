@@ -44,12 +44,12 @@ const options = [{
   - default: `false`
 - **`options`** specifies the list of items available in the dropdown menu, using the structure shown above. Only `id` and `label` are required.
   - default: `[]`
-  - Other menu option types can be used by setting `isCustomList` to `true` and using the `menu-slot` slot with a custom list component.
+  - Other menu option types can be used by setting `isCustomList` to `true` and using the `list` slot with a custom list component.
 - **`selectedOption`** is a string specifying the `id` of the currently-selected option
   - default: `''`
 - **`optionGroup`** is a string describing the dropdown's purpose, accessible to screen-readers only
   - default: `options`
--  **`isCustomList`** replaces default option list with slot `menu-slot` allowing a custom list component to be used with different option type and behavior
+-  **`isCustomList`** replaces default option list with slot `list` allowing a custom list component to be used with different option type and behavior
    - default: `false`
 
 #### `<ia-dropdown>` slots
@@ -58,7 +58,7 @@ const options = [{
   - Use both `slot="caret-up"` and `class="caret-up-svg"` in the `<svg>`.
 - `slot="caret-down"` replaces default down caret svg.
   - Use both `slot="caret-down"` and `class="caret-down-svg"` in the `<svg>`.
-- `slot="menu-slot"` allows replacing default dropdown menu option type and behavior.
+- `slot="list"` allows replacing default dropdown menu option type and behavior.
 
 #### `<ia-dropdown>` events
 Listens for:

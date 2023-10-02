@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation */
-import { html, fixture, expect } from '@open-wc/testing';
+import { aTimeout, html, fixture, expect } from '@open-wc/testing';
 import sinon from 'sinon';
 
 import type { IaDropdown, optionInterface } from '../src/ia-dropdown';
@@ -323,5 +323,66 @@ describe('IaDropdown', () => {
       await el.updateComplete;
       expect(el.availableOptions.length).to.equal(2);
     });
+  });
+
+  describe('Keyboard', () => {
+    it('ignores Escape key by default', async () => {
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown .options=${[]}></ia-dropdown>`
+      );
+
+      expect(el.open).to.be.false;
+
+      const mainButton = el.shadowRoot?.querySelector(
+        'button.click-main'
+      ) as HTMLButtonElement;
+      mainButton?.click();
+      await el.updateComplete;
+      expect(el.open).to.be.true;
+
+      const escapeKeyEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+      document.dispatchEvent(escapeKeyEvent);
+      await el.updateComplete;
+      expect(el.open).to.be.true;
+    });
+
+    it('closes on Escape key', async () => {
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown .closeOnEscape=${true} .options=${[]}> </ia-dropdown>`
+      );
+
+      expect(el.open).to.be.false;
+
+      const mainButton = el.shadowRoot?.querySelector(
+        'button.click-main'
+      ) as HTMLButtonElement;
+      mainButton?.click();
+      await el.updateComplete;
+      expect(el.open).to.be.true;
+
+      const escapeKeyEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+      document.dispatchEvent(escapeKeyEvent);
+      await aTimeout(50);
+      expect(el.open).to.be.false;
+    });
+  });
+
+  it('can display slotted options as custom list', async () => {
+    const customList = html`<li slot="list">
+      <div class="foo">foo</div>
+    </li>`;
+    const el = await fixture<IaDropdown>(
+      html`<ia-dropdown ?isCustomlist=${true}> ${customList} </ia-dropdown>`
+    );
+    expect(el.isCustomList).to.be.true;
+
+    const slot = el.shadowRoot?.querySelector('slot[name=list]');
+    expect(slot).to.exist;
+    const elements = (slot as HTMLSlotElement)?.assignedElements();
+    expect(elements).to.exist;
+    expect(elements?.length).to.equal(1);
+    const li = elements?.[0] as HTMLLIElement;
+    expect(li).to.exist;
+    expect(li?.querySelector('.foo')).to.exist;
   });
 });

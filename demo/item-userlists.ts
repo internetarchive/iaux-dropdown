@@ -1,3 +1,16 @@
+/**
+ * Multi-select dropdown demo
+ * Creates list of li userlist elements.
+ * Demonstates custom options and behavior
+ * to use in ia-dropdown component.
+ *
+ * Events emitted:
+ *   'selectDropdown'
+ *     - option selected/unselected, returns selected count
+ *   'closeDropdown'
+ *     - have parent close the dropdown
+ */
+
 /* eslint-disable no-param-reassign */
 import {
   html,
@@ -33,12 +46,6 @@ export class ItemUserlists extends LitElement {
    * List of item userlists
    */
   @property({ type: Array }) lists: userlistDataInterface[] = [];
-
-  // Set up Escape key listener after render
-  async firstUpdated(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 0));
-    document.addEventListener(this.onKeydown);
-  }
 
   get checkIcon(): SVGTemplateResult {
     return svg`<svg viewBox="0 0 100 100"
@@ -125,13 +132,6 @@ export class ItemUserlists extends LitElement {
     return options;
   }
 
-  // Arrow function to maintain desired `this` binding
-  private onKeydown = (e: KeyboardEvent): void => {
-    if (e.key === 'Escape') {
-      this.closeDropdown();
-    }
-  }
-
   private onSelected(option: userlistOptionInterface): void {
     let selectedCount = 0;
     /* above disable no-param-reassign */
@@ -163,8 +163,6 @@ export class ItemUserlists extends LitElement {
         composed: true,
       })
     );
-    // Clean up Escape key listener
-    document.removeEventListener('keydown', this.onKeydown);
   }
 
   render() {

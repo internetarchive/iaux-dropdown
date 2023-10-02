@@ -195,10 +195,7 @@ export class AppRoot extends LitElement {
 
   get itemUserlists(): TemplateResult {
     return html`
-      <item-userlists
-        slot="menu-slot"
-        .lists=${this.userlistData}
-      ></item-userlists>
+      <item-userlists slot="list" .lists=${this.userlistData}></item-userlists>
     `;
   }
 
@@ -360,6 +357,7 @@ export class AppRoot extends LitElement {
           ?closeOnSelect=${true}
           ?includeSelectedOption=${true}
           ?isCustomList=${true}
+          ?closeOnEscape=${true}
         >
           <div class="list-title" slot="dropdown-label">${this.mainButton}</div>
           ${this.itemUserlists}

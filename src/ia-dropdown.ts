@@ -330,7 +330,7 @@ export class IaDropdown extends LitElement {
         flex-direction: var(--dropdownMainButtonFlexDirection, row);
       }
 
-      button slot {
+      button slot[name='dropdown-label'] {
         /* Set var to 0px for column layout */
         padding-right: var(--buttonSlotPaddingRight, 5px);
         display: inline-block;

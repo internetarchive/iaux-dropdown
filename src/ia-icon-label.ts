@@ -40,6 +40,7 @@ export class IaIconLabel extends LitElement {
       justify-content: flex-start;
       align-content: center;
       flex-wrap: nowrap;
+      flex-direction: var(--iconLabelFlexDirection, row);
       height: 100%;
     }
 
@@ -51,7 +52,37 @@ export class IaIconLabel extends LitElement {
       justify-content: flex-start;
       align-content: center;
       flex-wrap: nowrap;
+      white-space: nowrap;
       height: 100%;
+    }
+
+    /* https://css-tricks.com/flexbox-truncated-text/ */
+    ::slotted(div.truncate) {
+      display: flex;
+      width: var(--labelWidth, 100%);
+      text-align: left;
+      word-wrap: break-word; /* Important for long words! */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    @supports not (-webkit-line-clamp: 2) {
+      ::slotted(div.truncate) {
+        min-width: 0;
+      }
+    }
+    @supports (-webkit-line-clamp: 2) {
+      ::slotted(div.truncate) {
+        min-width: 0;
+        display: -webkit-box;
+        overflow-wrap: break-word;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        /* max-height needed for Safari browser */
+        max-height: var(--labelTruncateHeight, 30px);
+        max-width: var(--labelWidth, 100%);
+      }
     }
   `;
 }

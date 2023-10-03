@@ -7,7 +7,7 @@ import {
   svg,
   SVGTemplateResult,
 } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, query } from 'lit/decorators.js';
 
 export interface optionInterface {
   url?: string;
@@ -69,6 +69,74 @@ export class IaDropdown extends LitElement {
   @property({ type: String }) optionGroup: string = 'options';
 
   @property({ type: Function }) optionSelected = () => {};
+
+  /**
+   * Specifies whether the dropdown option list passed in as <slot>.
+   */
+  @property({ type: Boolean, reflect: true }) isCustomList = false;
+
+  /**
+   * Specifies whether the dropdown should automatically close when the Esc key is pressed.
+   * Defaults to `false`, for backwards-compatibility.
+   */
+  @property({ type: Boolean, reflect: true }) closeOnEscape = false;
+
+  @query('.click-main') mainButton!: HTMLButtonElement;
+
+  // Lifecycle methods
+  disconnectedCallback(): void {
+    super.disconnectedCallback?.();
+    this.removeKeyboardListener();
+  }
+
+  /**
+   * Add an event listener to close the date picker modal when the Esc key is pressed
+   */
+  private setupKeyboardListener(): void {
+    if (this.closeOnEscape) {
+      document.addEventListener('keydown', this.boundKeyboardListener);
+    }
+  }
+
+  /**
+   * Remove the Esc key listener that was previously added
+   */
+  private removeKeyboardListener(): void {
+    if (this.closeOnEscape) {
+      document.removeEventListener('keydown', this.boundKeyboardListener);
+    }
+  }
+
+  /**
+   * Closes the modal dialog if the given event is pressing the Esc key.
+   * Arrow function to ensure `this` remains bound to the current component.
+   */
+  private boundKeyboardListener = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'Escape':
+      case 'Esc':
+        this.open = false;
+        break;
+      default:
+        break;
+    }
+  };
+
+  get dropdownState(): string {
+    if (this.open) {
+      this.setupKeyboardListener();
+      return 'open';
+    }
+    this.removeKeyboardListener();
+    return 'closed';
+  }
+
+  async firstUpdated(): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 0));
+    this.addEventListener('closeDropdown', () => {
+      this.open = false;
+    });
+  }
 
   /**
    * In cases where both the main button and its caret are interactive, we don't
@@ -158,14 +226,6 @@ export class IaDropdown extends LitElement {
     }
   }
 
-  get dropdownState(): string {
-    if (this.open) {
-      return 'open';
-    }
-
-    return 'closed';
-  }
-
   get caretUp(): SVGTemplateResult {
     return svg`<svg class="caret-up-svg" viewBox="0 0 8 4" xmlns="http://www.w3.org/2000/svg">
     <path d="m6.7226499 3.51689722c.22976435.15317623.54019902.0910893.69337525-.13867505.13615665-.20423497.10222882-.47220946-.06836249-.63681849l-.07031256-.05655675-3.2773501-2.18490007-3.2773501 2.18490007c-.22976434.15317623-.29185128.4636109-.13867505.69337524.13615665.20423498.39656688.27598409.61412572.18182636l.07924953-.04315131 2.7226499-1.81402514z"
@@ -190,10 +250,17 @@ export class IaDropdown extends LitElement {
     );
   }
 
+  get dropdownFormat(): TemplateResult {
+    if (this.isCustomList) {
+      return html`<slot name="list"></slot>`;
+    }
+    return html`${this.availableOptions.map(o => this.renderOption(o))}`;
+  }
+
   render() {
     return html`
       <div class="ia-dropdown-group">
-        <button @click=${this.mainButtonClicked} class="click-main">
+        <button class="click-main" @click=${this.mainButtonClicked}>
           <span class="cta sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
           ${this.displayCaret
@@ -219,7 +286,7 @@ export class IaDropdown extends LitElement {
         </button>
 
         <ul class="dropdown-main ${this.dropdownState}">
-          ${this.availableOptions.map(o => this.renderOption(o))}
+          ${this.dropdownFormat}
         </ul>
       </div>
     `;
@@ -252,18 +319,20 @@ export class IaDropdown extends LitElement {
         background: transparent;
         color: inherit;
         padding: var(--dropdownMainButtonPadding, 0px);
-        border: none;
+        border: var(--dropdownMainButtonBorder, none);
+        border-radius: var(--dropdownMainButtonBorderRadius, none);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         align-content: center;
         flex-wrap: nowrap;
-        flex-direction: row;
+        flex-direction: var(--dropdownMainButtonFlexDirection, row);
       }
 
-      button slot {
-        padding-right: 5px;
+      button slot[name='dropdown-label'] {
+        /* Set var to 0px for column layout */
+        padding-right: var(--buttonSlotPaddingRight, 5px);
         display: inline-block;
       }
 
@@ -340,6 +409,8 @@ export class IaDropdown extends LitElement {
 
       ul.dropdown-main {
         background: ${dropdownBgColor};
+        /* Prevent top/bottom inner li from overlapping inner border */
+        overflow: hidden;
       }
 
       ul.dropdown-main li:hover {

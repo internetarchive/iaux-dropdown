@@ -101,6 +101,15 @@ Dropdown list z-index:
 Dropdown item padding:
 - `var(--dropdownItemPaddingTop, 5px)` (similarly for `Right`, `Bottom`, and `Left`)
 
+Main button:
+- `var(--dropdownMainButtonPadding, 0px)`
+- `var(--dropdownMainButtonBorder, none)`
+- `var(--dropdownMainButtonBorderRadius, none)`
+- `var(--dropdownMainButtonFlexDirection, row)` (Setting to `column` allows vertical layout)
+- `var(--dropdownMainButtonHoverBgColor, inherit)`
+- `var(--dropdownMainButtonFocusBgColor, inherit)`
+- `var(--dropdownMainButtonActiveBgColor, inherit)`
+
 Caret:
 - `var(--caretWidth, 20px)`
 - `var(--caretHeight, 10px)`

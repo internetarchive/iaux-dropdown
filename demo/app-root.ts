@@ -423,20 +423,12 @@ export class AppRoot extends LitElement {
       --buttonSlotPaddingRight: 0;
       --dropdownMainButtonFlexDirection: column;
       --dropdownMainButtonPadding: 5px 5px;
+      --dropdownMainButtonHoverBgColor: rgba(44, 44, 44, 0.1);
+      --dropdownMainButtonActiveBgColor: rgba(44, 44, 44, 0.3);
       --iconLabelGutterWidth: 0;
       --iconWidth: 17.5px;
       --dropdownMainButtonBorder: 2px solid #2c2c2c;
       --dropdownMainButtonBorderRadius: 3px;
-    }
-
-    .list-title button:hover {
-      /* 10% */
-      background-color: /* #eaeaea */ rgba(44, 44, 44, 0.1);
-    }
-
-    .list-title button:active {
-      /* 30% */
-      background-color: /* #c0c0c0 */ rgba(44, 44, 44, 0.3);
     }
 
     ia-dropdown.slotted-caret {
@@ -450,7 +442,6 @@ export class AppRoot extends LitElement {
       --iconLabelFlexDirection: column;
       --iconLabelGutterWidth: 0;
       --iconWidth: 17.5px;
-      background-color: #fff;
     }
 
     /* inside button.click-main, classname from details.inc buttons */

@@ -330,6 +330,19 @@ export class IaDropdown extends LitElement {
         flex-direction: var(--dropdownMainButtonFlexDirection, row);
       }
 
+      button.click-main:hover {
+        background-color: var(--dropdownMainButtonHoverBgColor, inherit);
+      }
+
+      button.click-main:focus,
+      button.click-main:focus-visible {
+        background-color: var(--dropdownMainButtonFocusBgColor, inherit);
+      }
+
+      button.click-main:active {
+        background-color: var(--dropdownMainButtonActiveBgColor, inherit);
+      }
+
       button slot[name='dropdown-label'] {
         /* Set var to 0px for column layout */
         padding-right: var(--buttonSlotPaddingRight, 5px);

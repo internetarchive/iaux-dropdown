@@ -7,7 +7,7 @@ import {
   svg,
   SVGTemplateResult,
 } from 'lit';
-import { property, customElement, query } from 'lit/decorators.js';
+import { property, customElement, state, query } from 'lit/decorators.js';
 
 export interface optionInterface {
   url?: string;
@@ -81,6 +81,18 @@ export class IaDropdown extends LitElement {
    */
   @property({ type: Boolean, reflect: true }) closeOnEscape = false;
 
+  /**
+   * Specifies whether the dropdown should close on clicks outside the dropdown menu.
+   * Defaults to `false`, for backwards-compatibility.
+   */
+  @property({ type: Boolean, reflect: true }) closeOnBackdropClick = false;
+
+  /**
+   * Whether the transparent backdrop to catch clicks outside the dropdown menu
+   * should be rendered.
+   */
+  @state() dropdownBackdropVisible = false;
+
   @query('.click-main') mainButton!: HTMLButtonElement;
 
   // Lifecycle methods
@@ -115,7 +127,7 @@ export class IaDropdown extends LitElement {
     switch (e.key) {
       case 'Escape':
       case 'Esc':
-        this.open = false;
+        this.closeOptions();
         break;
       default:
         break;
@@ -133,10 +145,27 @@ export class IaDropdown extends LitElement {
 
   async firstUpdated(): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 0));
-    this.addEventListener('closeDropdown', () => {
-      this.open = false;
-    });
+    this.addEventListener('closeDropdown', this.closeOptions);
   }
+
+  /**
+   * Template for rendering the transparent backdrop to capture clicks outside the
+   * dropdown menu while it is open.
+   */
+  private get dropdownBackdrop() {
+    return html`
+      <div
+        id="dropdown-backdrop"
+        @keyup=${this.closeOptions}
+        @click=${this.closeOptions}
+      ></div>
+    `;
+  }
+
+  private closeOptions = () => {
+    this.dropdownBackdropVisible = false;
+    this.open = false;
+  };
 
   /**
    * In cases where both the main button and its caret are interactive, we don't
@@ -192,6 +221,7 @@ export class IaDropdown extends LitElement {
 
   toggleOptions(): void {
     this.open = !this.open;
+    this.dropdownBackdropVisible = this.open;
   }
 
   private mainButtonClicked(): void {
@@ -288,6 +318,10 @@ export class IaDropdown extends LitElement {
         <ul class="dropdown-main ${this.dropdownState}">
           ${this.dropdownFormat}
         </ul>
+
+        ${this.closeOnBackdropClick && this.dropdownBackdropVisible
+          ? this.dropdownBackdrop
+          : nothing}
       </div>
     `;
   }
@@ -328,6 +362,7 @@ export class IaDropdown extends LitElement {
         align-content: center;
         flex-wrap: nowrap;
         flex-direction: var(--dropdownMainButtonFlexDirection, row);
+        z-index: var(--dropdownListZIndex, 2);
       }
 
       button.click-main:hover {
@@ -382,8 +417,18 @@ export class IaDropdown extends LitElement {
         width: var(--caretWidth, 20px);
       }
 
+      #dropdown-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: transparent;
+        z-index: 1;
+      }
+
       ul {
-        z-index: var(--dropdownListZIndex, 1);
+        z-index: var(--dropdownListZIndex, 2);
       }
 
       ul.dropdown-main.closed {

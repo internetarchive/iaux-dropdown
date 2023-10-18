@@ -51,6 +51,10 @@ const options = [{
   - default: `options`
 -  **`isCustomList`** replaces default option list with slot `list` allowing a custom list component to be used with different option type and behavior
    - default: `false`
+-  **`closeOnEscape`** controls whether the dropdown menu should close when the escape key is pressed
+   - default: `false`
+-  **`closeOnBackdropClick`** controls whether the dropdown menu should close when the backdrop is clicked
+   - default: `false`
 
 #### `<ia-dropdown>` slots
 - `slot="dropdown-label"` the main button that opens the dropdown menu.

@@ -260,6 +260,7 @@ export class AppRoot extends LitElement {
         ?openViaButton=${this.openViaButton}
         ?openViaCaret=${this.openViaCaret}
         ?closeOnSelect=${this.closeOnSelect}
+        ?closeOnBackdropClick=${true}
         ?includeSelectedOption=${this.includeSelectedOption}
         selectedOption=${this.selectedOptionId}
         .options=${[
@@ -358,6 +359,7 @@ export class AppRoot extends LitElement {
           ?includeSelectedOption=${true}
           ?isCustomList=${true}
           ?closeOnEscape=${true}
+          ?closeOnBackdropClick=${true}
         >
           <div class="list-title" slot="dropdown-label">${this.mainButton}</div>
           ${this.itemUserlists}

@@ -216,7 +216,9 @@ export class IaDropdown extends LitElement {
       option.selectedHandler?.(option);
     }
 
-    if (this.closeOnSelect) this.open = false;
+    if (this.closeOnSelect) {
+      this.closeOptions();
+    }
   }
 
   toggleOptions(): void {

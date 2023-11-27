@@ -560,7 +560,7 @@
     `}get itemUserlists(){return h`
       <item-userlists slot="list" .lists=${this.userlistData}></item-userlists>
     `}render(){const t=this.selectedOptionId==="foo-bar";return h`
-      <section><h2>Testing dropdown</h2></section>
+      <section><h2>iaux-dropdown</h2></section>
 
       ${this.checkboxRowTemplate({id:"display-caret-check",label:"Display caret",isChecked:this.displayCaret,onChange:()=>{this.displayCaret=this.displayCaretCheck.checked,this.displayCaret||(this.openViaCaret=!1,this.openViaCaretCheck.checked=!1)}})}
       ${this.checkboxRowTemplate({id:"open-via-button",label:"Open via button",isChecked:this.openViaButton,onChange:()=>{this.openViaButton=this.openViaButtonCheck.checked}})}
@@ -571,7 +571,11 @@
       <button class="change-color" @click=${()=>this.changeColors()}>
         change colors
       </button>
-
+      <hr />
+      <section><h2>Testing basic dropdown</h2></section>
+      <ul>
+        <li>Click to background to close</li>
+      </ul>
       <ia-dropdown
         class=${this.colorScheme}
         ?displayCaret=${this.displayCaret}
@@ -622,6 +626,12 @@
 
       <hr />
       <section><h2>Testing userlist check dropdown</h2></section>
+      <ul>
+        <li>Esc key to close</li>
+        <li>Click to background to close</li>
+        <li>Select to close</li>
+        <li>Main button icon change 0,>0 selected</li>
+      </ul>
 
       <div class="list-test">
         <ia-dropdown

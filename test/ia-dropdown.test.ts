@@ -30,6 +30,21 @@ describe('IaDropdown', () => {
     expect(caret).to.exist;
   });
 
+  it('can be disabled', async () => {
+    const el = await fixture<IaDropdown>(html`<ia-dropdown></ia-dropdown>`);
+    expect(el.disabled).to.be.false;
+
+    el.disabled = true;
+    await el.updateComplete;
+
+    expect(el.disabled).to.be.true;
+
+    const mainButton = el.shadowRoot?.querySelector(
+      'button.click-main'
+    ) as HTMLButtonElement;
+    expect(mainButton.disabled).to.be.true;
+  });
+
   describe('Slotted caret', () => {
     it('can display slotted caret', async () => {
       const svgCaret = html`<svg

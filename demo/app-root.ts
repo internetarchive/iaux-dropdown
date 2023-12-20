@@ -28,6 +28,8 @@ export class AppRoot extends LitElement {
 
   @state() private displayCaret: boolean = true;
 
+  @state() private disable: boolean = false;
+
   @state() private openViaButton: boolean = true;
 
   @state() private openViaCaret: boolean = true;
@@ -44,6 +46,9 @@ export class AppRoot extends LitElement {
 
   @query('#display-caret-check')
   private displayCaretCheck!: HTMLInputElement;
+
+  @query('#disable-check')
+  private disableCheck!: HTMLInputElement;
 
   @query('#open-via-button')
   private openViaButtonCheck!: HTMLInputElement;
@@ -217,6 +222,14 @@ export class AppRoot extends LitElement {
         },
       })}
       ${this.checkboxRowTemplate({
+        id: 'disable-check',
+        label: 'Disable',
+        isChecked: this.disable,
+        onChange: () => {
+          this.disable = this.disableCheck.checked;
+        },
+      })}
+      ${this.checkboxRowTemplate({
         id: 'open-via-button',
         label: 'Open via button',
         isChecked: this.openViaButton,
@@ -261,6 +274,7 @@ export class AppRoot extends LitElement {
       <ia-dropdown
         class=${this.colorScheme}
         ?displayCaret=${this.displayCaret}
+        ?disabled=${this.disable}
         ?openViaButton=${this.openViaButton}
         ?openViaCaret=${this.openViaCaret}
         ?closeOnSelect=${this.closeOnSelect}
@@ -308,6 +322,7 @@ export class AppRoot extends LitElement {
         <ia-dropdown
           class="slotted-caret"
           ?displaycaret=${true}
+          ?disabled=${this.disable}
           ?openViaButton=${false}
           ?openViaCaret=${true}
           ?closeOnSelect=${false}
@@ -363,6 +378,7 @@ export class AppRoot extends LitElement {
         <ia-dropdown
           class="list-dropdown"
           ?displaycaret=${false}
+          ?disabled=${this.disable}
           ?openViaButton=${true}
           ?openViaCaret=${false}
           ?closeOnSelect=${true}

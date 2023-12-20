@@ -278,8 +278,6 @@ export class IaDropdown extends LitElement {
   }
 
   get caretTemplate(): TemplateResult {
-    if (!this.displayCaret) return html``;
-
     return html`
       <span
         class="caret"
@@ -325,7 +323,7 @@ export class IaDropdown extends LitElement {
         >
           <span class="cta sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
-          ${this.caretTemplate}
+          ${this.displayCaret ? this.caretTemplate : nothing}
         </button>
 
         <ul class="dropdown-main ${this.dropdownState}">

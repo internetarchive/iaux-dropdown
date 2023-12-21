@@ -24,6 +24,11 @@ export class IaDropdown extends LitElement {
   @property({ type: Boolean, attribute: true }) open = false;
 
   /**
+   * Determines whether the dropdown's option menu is currently visible.
+   */
+  @property({ type: Boolean, attribute: true }) disabled = false;
+
+  /**
    * Specifies whether a caret should be displayed beside the main button content.
    * Defaults to `false`.
    */
@@ -272,6 +277,25 @@ export class IaDropdown extends LitElement {
   </svg>`;
   }
 
+  get caretTemplate(): TemplateResult {
+    return html`
+      <span
+        class="caret"
+        tabindex=${this.openViaCaret && !this.openViaButton ? '0' : nothing}
+        role=${this.openViaCaret ? 'button' : nothing}
+        @click=${this.disabled ? nothing : this.caretClicked}
+        @keydown=${this.disabled ? nothing : this.caretKeyDown}
+      >
+        <span ?hidden=${!this.open} class="caret-up-slot">
+          <slot name="caret-up">${this.caretUp}</slot>
+        </span>
+        <span ?hidden=${this.open} class="caret-down-slot">
+          <slot name="caret-down">${this.caretDown}</slot>
+        </span>
+      </span>
+    `;
+  }
+
   get availableOptions(): optionInterface[] {
     // If we're showing the selected option in the dropdown then _all_ options are available.
     if (this.includeSelectedOption) return this.options;
@@ -292,29 +316,14 @@ export class IaDropdown extends LitElement {
   render() {
     return html`
       <div class="ia-dropdown-group">
-        <button class="click-main" @click=${this.mainButtonClicked}>
+        <button
+          class="click-main"
+          @click=${this.mainButtonClicked}
+          ?disabled=${this.disabled}
+        >
           <span class="cta sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
-          ${this.displayCaret
-            ? html`
-                <span
-                  class="caret"
-                  tabindex=${this.openViaCaret && !this.openViaButton
-                    ? '0'
-                    : nothing}
-                  role=${this.openViaCaret ? 'button' : nothing}
-                  @click=${this.caretClicked}
-                  @keydown=${this.caretKeyDown}
-                >
-                  <span ?hidden=${!this.open} class="caret-up-slot">
-                    <slot name="caret-up">${this.caretUp}</slot>
-                  </span>
-                  <span ?hidden=${this.open} class="caret-down-slot">
-                    <slot name="caret-down">${this.caretDown}</slot>
-                  </span>
-                </span>
-              `
-            : nothing}
+          ${this.displayCaret ? this.caretTemplate : nothing}
         </button>
 
         <ul class="dropdown-main ${this.dropdownState}">
@@ -365,6 +374,11 @@ export class IaDropdown extends LitElement {
         flex-wrap: nowrap;
         flex-direction: var(--dropdownMainButtonFlexDirection, row);
         z-index: var(--dropdownListZIndex, 2);
+      }
+
+      button.click-main:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
       }
 
       button.click-main:hover {

@@ -382,7 +382,9 @@ export class AppRoot extends LitElement {
         <li>Click to background to close</li>
         <li>Select to close</li>
         <li>Main button icon change 0,>0 selected</li>
+        <li>hasCustomClickHandler opens, closes</li>
       </ul>
+      <br />
 
       <div class="list-test">
         <ia-dropdown

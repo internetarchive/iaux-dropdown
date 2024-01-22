@@ -41,6 +41,12 @@ export class AppRoot extends LitElement {
   // Count for main button icon state
   @state() private selectedCount: number = 0;
 
+  // State for userlist dropdown
+  // Used in example where host component handles open/close
+  // ?hasCustomClickHandler=${true}
+  // @click=${() => this.toggleOpen()}
+  @state() private open: boolean = false;
+
   // Data for userlist dropdown
   @state() private userlistData: userlistDataInterface[] = [];
 
@@ -80,6 +86,10 @@ export class AppRoot extends LitElement {
     };
     // eslint-disable-next-line no-undef
     this.addEventListener('selectDropdown', eventListener as EventListener);
+  }
+
+  toggleOpen() {
+    this.open = !this.open;
   }
 
   get correctIcon(): SVGTemplateResult {
@@ -377,6 +387,7 @@ export class AppRoot extends LitElement {
       <div class="list-test">
         <ia-dropdown
           class="list-dropdown"
+          ?open=${this.open}
           ?displaycaret=${false}
           ?disabled=${this.disable}
           ?openViaButton=${true}
@@ -386,6 +397,8 @@ export class AppRoot extends LitElement {
           ?isCustomList=${true}
           ?closeOnEscape=${true}
           ?closeOnBackdropClick=${true}
+          ?hasCustomClickHandler=${true}
+          @click=${() => this.toggleOpen()}
         >
           <div class="list-title" slot="dropdown-label">${this.mainButton}</div>
           ${this.itemUserlists}

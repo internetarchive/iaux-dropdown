@@ -75,6 +75,16 @@ export class IaDropdown extends LitElement {
   @property({ type: Boolean, reflect: true }) isCustomList = false;
 
   /**
+   * Indicates whether mainbutton click handler overridden by @click
+   * in definition or handler in ancestor.
+   * If true, prevents dropdown from opening, closing on main button click.
+   * Custom handler will need to handle click events and this.open property.
+   * This allows loading dropdown options on click from an API before opening dropdown.
+   * And optional event delegation of dropdown item clicks to parent component.
+   */
+  @property({ type: Boolean }) hasCustomClickHandler = false;
+
+  /**
    * Specifies whether the dropdown should automatically close when the Esc key is pressed.
    * Defaults to `false`, for backwards-compatibility.
    */
@@ -226,6 +236,11 @@ export class IaDropdown extends LitElement {
   }
 
   private mainButtonClicked(): void {
+    if (this.hasCustomClickHandler) {
+      // do nothing
+      return;
+    }
+
     // If this click was already handled on the caret, we should ignore it so
     // that we don't toggle the options twice.
     if (this.handlingCaretClick) {

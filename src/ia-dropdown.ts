@@ -15,25 +15,25 @@ export class IaDropdown extends LitElement {
   /**
    * Determines whether the dropdown's option menu is currently visible.
    */
-  @property({ type: Boolean, attribute: true }) open = false;
+  @property({ type: Boolean }) open = false;
 
   /**
    * Determines whether the dropdown's option menu is currently visible.
    */
-  @property({ type: Boolean, attribute: true }) disabled = false;
+  @property({ type: Boolean }) disabled = false;
 
   /**
    * Specifies whether a caret should be displayed beside the main button content.
    * Defaults to `false`.
    */
-  @property({ type: Boolean, attribute: true }) displayCaret = false;
+  @property({ type: Boolean }) displayCaret = false;
 
   /**
    * Specifies whether the dropdown should automatically close when an option is selected.
    *
    * Defaults to `false`, for backwards-compatibility.
    */
-  @property({ type: Boolean, attribute: true }) closeOnSelect = false;
+  @property({ type: Boolean }) closeOnSelect = false;
 
   /**
    * Specifies whether pressing the main button (aside from the caret) should open
@@ -42,7 +42,7 @@ export class IaDropdown extends LitElement {
    * Both this and `openViaCaret` default to true, making the entire main-button-and-caret
    * row interactive. However, each of these can be disabled independently.
    */
-  @property({ type: Boolean, attribute: true }) openViaButton = true;
+  @property({ type: Boolean }) openViaButton = true;
 
   /**
    * Specifies whether pressing the caret element (if present) should open the dropdown.
@@ -50,7 +50,7 @@ export class IaDropdown extends LitElement {
    * Both this and `openViaButton` default to true, making the entire main-button-and-caret
    * row interactive. However, each of these can be disabled independently.
    */
-  @property({ type: Boolean, attribute: true }) openViaCaret = true;
+  @property({ type: Boolean }) openViaCaret = true;
 
   /**
    * Specifies whether the currently-selected option should be shown in the dropdown menu.
@@ -59,9 +59,9 @@ export class IaDropdown extends LitElement {
    *
    * Defaults to `false`, for backwards-compatibility.
    */
-  @property({ type: Boolean, attribute: true }) includeSelectedOption = false;
+  @property({ type: Boolean }) includeSelectedOption = false;
 
-  @property({ type: String, attribute: true }) selectedOption = '';
+  @property({ type: String }) selectedOption = '';
 
   @property({ type: Array }) options: optionInterface[] = [];
 
@@ -82,7 +82,7 @@ export class IaDropdown extends LitElement {
    * This allows loading dropdown options on click from an API before opening dropdown.
    * And optional event delegation of dropdown item clicks to parent component.
    */
-  @property({ type: Boolean }) hasCustomClickHandler = false;
+  @property({ type: Boolean, reflect: true }) hasCustomClickHandler = false;
 
   /**
    * Specifies whether the dropdown should automatically close when the Esc key is pressed.

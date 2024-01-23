@@ -1,5 +1,7 @@
 import { html, css, LitElement, TemplateResult, nothing } from 'lit';
-import { property, customElement, state, query } from 'lit/decorators.js';
+import { property, customElement } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
+
 import caretUp from './assets/icons/caret-up';
 import caretDown from './assets/icons/caret-down';
 
@@ -18,7 +20,7 @@ export class IaDropdown extends LitElement {
   @property({ type: Boolean }) open = false;
 
   /**
-   * Determines whether the dropdown's option menu is currently visible.
+   * Determines whether the main button and/or caret is disabled.
    */
   @property({ type: Boolean }) disabled = false;
 
@@ -63,11 +65,14 @@ export class IaDropdown extends LitElement {
 
   @property({ type: String }) selectedOption = '';
 
-  @property({ type: Array }) options: optionInterface[] = [];
+  @property({ attribute: false }) options: optionInterface[] = [];
 
+  /**
+   * Option group label for screen readers.
+   */
   @property({ type: String }) optionGroup: string = 'options';
 
-  @property({ type: Function }) optionSelected = () => {};
+  @property({ attribute: false }) optionSelected = () => {};
 
   /**
    * Specifies whether the dropdown option list passed in as <slot>.
@@ -96,42 +101,38 @@ export class IaDropdown extends LitElement {
    */
   @property({ type: Boolean, reflect: true }) closeOnBackdropClick = false;
 
-  /**
-   * Whether the transparent backdrop to catch clicks outside the dropdown menu
-   * should be rendered.
-   */
-  @state() dropdownBackdropVisible = false;
-
-  @query('.click-main') mainButton!: HTMLButtonElement;
-
   // Lifecycle methods
+  async firstUpdated(): Promise<void> {
+    // Wait for the next tick to ensure that the dropdown is in the DOM
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    this.addEventListener('closeDropdown', this.closeOptions);
+  }
+
   disconnectedCallback(): void {
     super.disconnectedCallback?.();
     this.removeKeyboardListener();
   }
 
-  /**
-   * Add an event listener to close the date picker modal when the Esc key is pressed
-   */
+  // Events
+
+  // Add optional event listener to close dropdown when Esc key pressed
   private setupKeyboardListener(): void {
     if (this.closeOnEscape) {
       document.addEventListener('keydown', this.boundKeyboardListener);
     }
   }
 
-  /**
-   * Remove the Esc key listener that was previously added
-   */
+  // Remove the Esc key listener for Esc key pressed
   private removeKeyboardListener(): void {
     if (this.closeOnEscape) {
       document.removeEventListener('keydown', this.boundKeyboardListener);
     }
   }
 
-  /**
-   * Closes the modal dialog if the given event is pressing the Esc key.
-   * Arrow function to ensure `this` remains bound to the current component.
-   */
+  // Event handlers
+
+  // Handle Esc key pressed
   private boundKeyboardListener = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'Escape':
@@ -152,29 +153,45 @@ export class IaDropdown extends LitElement {
     return 'closed';
   }
 
-  async firstUpdated(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 0));
-    this.addEventListener('closeDropdown', this.closeOptions);
-  }
-
-  /**
-   * Template for rendering the transparent backdrop to capture clicks outside the
-   * dropdown menu while it is open.
-   */
-  private get dropdownBackdrop() {
-    return html`
-      <div
-        id="dropdown-backdrop"
-        @keyup=${this.closeOptions}
-        @click=${this.closeOptions}
-      ></div>
-    `;
-  }
-
   private closeOptions = () => {
-    this.dropdownBackdropVisible = false;
     this.open = false;
   };
+
+  toggleOptions(): void {
+    this.open = !this.open;
+  }
+
+  private mainButtonClicked(): void {
+    // If this click was already handled on the caret, we should ignore it so
+    // that we don't toggle the options twice.
+    if (this.handlingCaretClick) {
+      this.handlingCaretClick = false;
+      return;
+    }
+
+    if (this.openViaButton) {
+      this.toggleOptions();
+    }
+  }
+
+  private caretInteracted(): void {
+    if (this.openViaCaret) {
+      this.toggleOptions();
+    }
+  }
+
+  private caretClicked(): void {
+    // Prevent the main button handler from running too
+    this.handlingCaretClick = true;
+    this.caretInteracted();
+  }
+
+  private caretKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(); // Spacebar scrolls the page by default
+      this.caretInteracted();
+    }
+  }
 
   /**
    * In cases where both the main button and its caret are interactive, we don't
@@ -188,6 +205,8 @@ export class IaDropdown extends LitElement {
    * while still allowing the event to bubble out of the component.
    */
   private handlingCaretClick = false;
+
+  // Options
 
   renderOption(availableOption: optionInterface): TemplateResult {
     const { label, url = undefined, id } = availableOption;
@@ -230,54 +249,28 @@ export class IaDropdown extends LitElement {
     }
   }
 
-  toggleOptions(): void {
-    this.open = !this.open;
-    this.dropdownBackdropVisible = this.open;
+  get availableOptions(): optionInterface[] {
+    // If we're showing the selected option in the dropdown then _all_ options are available.
+    if (this.includeSelectedOption) return this.options;
+
+    // Otherwise, exclude the selected option
+    return this.options.filter(
+      option => this.selectedOption !== (option as optionInterface).id
+    );
   }
 
-  private mainButtonClicked(): void {
-    if (this.hasCustomClickHandler) {
-      // do nothing
-      return;
-    }
-
-    // If this click was already handled on the caret, we should ignore it so
-    // that we don't toggle the options twice.
-    if (this.handlingCaretClick) {
-      this.handlingCaretClick = false;
-      return;
-    }
-
-    if (this.openViaButton) {
-      this.toggleOptions();
-    }
-  }
-
-  private caretInteracted(): void {
-    if (this.openViaCaret) {
-      this.toggleOptions();
-    }
-  }
-
-  private caretClicked(): void {
-    // Prevent the main button handler from running too
-    this.handlingCaretClick = true;
-    this.caretInteracted();
-  }
-
-  private caretKeyDown(e: KeyboardEvent): void {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault(); // Spacebar scrolls the page by default
-      this.caretInteracted();
-    }
-  }
+  // Templates
 
   get caretTemplate(): TemplateResult {
+    if (!this.displayCaret) return html``;
+
+    const tabindex = this.openViaCaret && !this.openViaButton ? '0' : undefined;
+    const role = this.openViaCaret ? 'button' : undefined;
     return html`
       <span
         class="caret"
-        tabindex=${this.openViaCaret && !this.openViaButton ? '0' : nothing}
-        role=${this.openViaCaret ? 'button' : nothing}
+        tabindex=${ifDefined(tabindex)}
+        role=${ifDefined(role)}
         @click=${this.disabled ? nothing : this.caretClicked}
         @keydown=${this.disabled ? nothing : this.caretKeyDown}
       >
@@ -291,21 +284,35 @@ export class IaDropdown extends LitElement {
     `;
   }
 
-  get availableOptions(): optionInterface[] {
-    // If we're showing the selected option in the dropdown then _all_ options are available.
-    if (this.includeSelectedOption) return this.options;
-
-    // Otherwise, exclude the selected option
-    return this.options.filter(
-      option => this.selectedOption !== (option as optionInterface).id
-    );
-  }
-
-  get dropdownFormat(): TemplateResult {
+  /**
+   * Renders the dropdown menu, either as a list of options or as a custom list
+   *
+   * NOTE: tried to skip initial rendering of dropdown options with:
+   *   if (!this.open) return html``;
+   * This would also remove dropdown options from DOM on close.
+   * But because options may have events, this could pose a memory leak issue.
+   */
+  get dropdownTemplate(): TemplateResult {
     if (this.isCustomList) {
       return html`<slot name="list"></slot>`;
     }
     return html`${this.availableOptions.map(o => this.renderOption(o))}`;
+  }
+
+  /**
+   * Optional template rendering transparent backdrop to capture clicks outside the
+   * dropdown menu when open.
+   */
+  private get backdropTemplate() {
+    if (!this.closeOnBackdropClick) return nothing;
+    if (!this.open) return nothing;
+    return html`
+      <div
+        id="dropdown-backdrop"
+        @keyup=${this.closeOptions}
+        @click=${this.closeOptions}
+      ></div>
+    `;
   }
 
   render() {
@@ -313,21 +320,21 @@ export class IaDropdown extends LitElement {
       <div class="ia-dropdown-group">
         <button
           class="click-main"
-          @click=${this.mainButtonClicked}
+          @click=${this.hasCustomClickHandler
+            ? nothing
+            : this.mainButtonClicked}
           ?disabled=${this.disabled}
         >
-          <span class="cta sr-only">Toggle ${this.optionGroup}</span>
+          <span class="sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
-          ${this.displayCaret ? this.caretTemplate : nothing}
+          ${this.caretTemplate}
         </button>
 
         <ul class="dropdown-main ${this.dropdownState}">
-          ${this.dropdownFormat}
+          ${this.dropdownTemplate}
         </ul>
 
-        ${this.closeOnBackdropClick && this.dropdownBackdropVisible
-          ? this.dropdownBackdrop
-          : nothing}
+        ${this.backdropTemplate}
       </div>
     `;
   }
@@ -372,6 +379,7 @@ export class IaDropdown extends LitElement {
       }
 
       button.click-main:disabled {
+        pointer-events: none;
         cursor: not-allowed;
         opacity: 0.5;
       }
@@ -454,16 +462,17 @@ export class IaDropdown extends LitElement {
         margin: var(--dropdownOffsetTop, 5px) 0 0 0;
         padding: 0;
         color: ${dropdownTextColor};
+        background: ${dropdownBgColor};
+
         font-size: var(--dropdownFontSize, inherit);
 
-        border-top: var(--dropdownBorderTopWidth, ${dropdownBorderWidth}) solid
-          ${dropdownBorderColor};
-        border-right: var(--dropdownBorderRightWidth, ${dropdownBorderWidth})
-          solid ${dropdownBorderColor};
-        border-bottom: var(--dropdownBorderBottomWidth, ${dropdownBorderWidth})
-          solid ${dropdownBorderColor};
-        border-left: var(--dropdownBorderLeftWidth, ${dropdownBorderWidth})
-          solid ${dropdownBorderColor};
+        border-top: var(--dropdownBorderTopWidth, ${dropdownBorderWidth});
+        border-right: var(--dropdownBorderRightWidth, ${dropdownBorderWidth});
+        border-bottom: var(--dropdownBorderBottomWidth, ${dropdownBorderWidth});
+        border-left: var(--dropdownBorderLeftWidth, ${dropdownBorderWidth});
+        /* Must be after border-width settings for specificity */
+        border-style: solid;
+        border-color: ${dropdownBorderColor};
 
         border-radius: var(
             --dropdownBorderTopLeftRadius,
@@ -474,10 +483,7 @@ export class IaDropdown extends LitElement {
           var(--dropdownBorderBottomLeftRadius, ${dropdownBorderRadius});
 
         white-space: var(--dropdownWhiteSpace, normal);
-      }
 
-      ul.dropdown-main {
-        background: ${dropdownBgColor};
         /* Prevent top/bottom inner li from overlapping inner border */
         overflow: hidden;
       }

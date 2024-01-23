@@ -280,10 +280,10 @@ describe('IaDropdown', () => {
 
       expect(el.optionGroup).to.equal('foobarz');
 
-      const srOnlyCTA = el.shadowRoot?.querySelector(
-        'button.click-main span.cta.sr-only'
+      const srOnly = el.shadowRoot?.querySelector(
+        'button.click-main span.sr-only'
       );
-      expect(srOnlyCTA?.innerHTML).to.contain('foobarz');
+      expect(srOnly?.innerHTML).to.contain('foobarz');
     });
 
     it('Only show available options in dropdown', async () => {

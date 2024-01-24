@@ -160,7 +160,7 @@ export class IaDropdown extends LitElement {
     return 'closed';
   }
 
-  private closeOptions = (e: Event): void => {
+  private closeOptions = (e?: Event): void => {
     if (e && e.type === 'click') {
       e.stopImmediatePropagation();
     }

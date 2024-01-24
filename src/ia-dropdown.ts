@@ -102,6 +102,7 @@ export class IaDropdown extends LitElement {
 
   /**
    * Specifies whether the dropdown should close on clicks outside the dropdown menu.
+   * Always closes when true, regardless of {@property hasCustomClickHandler}
    * Defaults to `false`, for backwards-compatibility.
    */
   @property({ type: Boolean, reflect: true }) closeOnBackdropClick = false;
@@ -159,7 +160,10 @@ export class IaDropdown extends LitElement {
     return 'closed';
   }
 
-  private closeOptions = () => {
+  private closeOptions = (e: Event): void => {
+    if (e && e.type === 'click') {
+      e.stopImmediatePropagation();
+    }
     this.open = false;
   };
 

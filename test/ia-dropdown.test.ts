@@ -32,12 +32,12 @@ describe('IaDropdown', () => {
 
   it('can be disabled', async () => {
     const el = await fixture<IaDropdown>(html`<ia-dropdown></ia-dropdown>`);
-    expect(el.disabled).to.be.false;
+    expect(el.isDisabled).to.be.false;
 
-    el.disabled = true;
+    el.isDisabled = true;
     await el.updateComplete;
 
-    expect(el.disabled).to.be.true;
+    expect(el.isDisabled).to.be.true;
 
     const mainButton = el.shadowRoot?.querySelector(
       'button.click-main'
@@ -90,8 +90,8 @@ describe('IaDropdown', () => {
 
       expect(el.displayCaret).to.be.true;
       const caret = el.shadowRoot?.querySelector('span.caret') as HTMLElement;
-      const caretDown = caret?.querySelector('.caret-down-slot') as HTMLElement;
-      const caretUp = caret?.querySelector('.caret-up-slot') as HTMLElement;
+      const caretDown = caret?.querySelector('.caret-down') as HTMLElement;
+      const caretUp = caret?.querySelector('.caret-up') as HTMLElement;
 
       expect(caretDown.hidden).to.be.false;
       expect(caretUp.hidden).to.be.true;

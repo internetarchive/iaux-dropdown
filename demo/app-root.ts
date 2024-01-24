@@ -186,7 +186,7 @@ export class AppRoot extends LitElement {
           type="checkbox"
           id=${options.id}
           ?checked=${options.isChecked ?? false}
-          ?disabled=${options.isDisabled ?? false}
+          ?isDisabled=${options.isDisabled ?? false}
           @change=${options.onChange ?? nothing}
         />
         <label for=${options.id}>${options.label}</label>
@@ -284,7 +284,7 @@ export class AppRoot extends LitElement {
       <ia-dropdown
         class=${this.colorScheme}
         ?displayCaret=${this.displayCaret}
-        ?disabled=${this.disable}
+        ?isDisabled=${this.disable}
         ?openViaButton=${this.openViaButton}
         ?openViaCaret=${this.openViaCaret}
         ?closeOnSelect=${this.closeOnSelect}
@@ -332,7 +332,7 @@ export class AppRoot extends LitElement {
         <ia-dropdown
           class="slotted-caret"
           ?displaycaret=${true}
-          ?disabled=${this.disable}
+          ?isDisabled=${this.disable}
           ?openViaButton=${false}
           ?openViaCaret=${true}
           ?closeOnSelect=${false}
@@ -382,7 +382,7 @@ export class AppRoot extends LitElement {
         <li>Click to background to close</li>
         <li>Select to close</li>
         <li>Main button icon change 0,>0 selected</li>
-        <li>hasCustomClickHandler opens, closes</li>
+        <li>hasCustomClickHandler opens, closes, doesn't fire when disabled</li>
       </ul>
       <br />
 
@@ -391,7 +391,7 @@ export class AppRoot extends LitElement {
           class="list-dropdown"
           ?open=${this.open}
           ?displaycaret=${false}
-          ?disabled=${this.disable}
+          ?isDisabled=${this.disable}
           ?openViaButton=${true}
           ?openViaCaret=${false}
           ?closeOnSelect=${true}
@@ -400,7 +400,7 @@ export class AppRoot extends LitElement {
           ?closeOnEscape=${true}
           ?closeOnBackdropClick=${true}
           ?hasCustomClickHandler=${true}
-          @click=${() => this.toggleOpen()}
+          @click=${!this.disable ? this.toggleOpen : nothing}
         >
           <div class="list-title" slot="dropdown-label">${this.mainButton}</div>
           ${this.itemUserlists}

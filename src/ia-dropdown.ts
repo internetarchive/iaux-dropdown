@@ -17,12 +17,12 @@ export class IaDropdown extends LitElement {
   /**
    * Determines whether the dropdown's option menu is currently visible.
    */
-  @property({ type: Boolean }) open = false;
+  @property({ type: Boolean, reflect: true }) open = false;
 
   /**
    * Determines whether the main button and/or caret is disabled.
    */
-  @property({ type: Boolean }) disabled = false;
+  @property({ type: Boolean, reflect: true }) isDisabled = false;
 
   /**
    * Specifies whether a caret should be displayed beside the main button content.
@@ -42,7 +42,7 @@ export class IaDropdown extends LitElement {
    * the dropdown.
    *
    * Both this and `openViaCaret` default to true, making the entire main-button-and-caret
-   * row interactive. However, each of these can be disabled independently.
+   * row interactive. However, either or both can be used or hidden independently.
    */
   @property({ type: Boolean }) openViaButton = true;
 
@@ -50,7 +50,7 @@ export class IaDropdown extends LitElement {
    * Specifies whether pressing the caret element (if present) should open the dropdown.
    *
    * Both this and `openViaButton` default to true, making the entire main-button-and-caret
-   * row interactive. However, each of these can be disabled independently.
+   * row interactive. However, either or both can be used or hidden independently.
    */
   @property({ type: Boolean }) openViaCaret = true;
 
@@ -80,12 +80,17 @@ export class IaDropdown extends LitElement {
   @property({ type: Boolean, reflect: true }) isCustomList = false;
 
   /**
-   * Indicates whether mainbutton click handler overridden by @click
-   * in definition or handler in ancestor.
+   * Indicates whether mainbutton @click event overridden by ancestor
+   * @click or custom event
+   *
    * If true, prevents dropdown from opening, closing on main button click.
-   * Custom handler will need to handle click events and this.open property.
-   * This allows loading dropdown options on click from an API before opening dropdown.
-   * And optional event delegation of dropdown item clicks to parent component.
+   *
+   * Custom click handling needs to handle:
+   * - enabling/disabling click events
+   * - this.open property
+   * - this.isDisabled property
+   *
+   * Allows loading options from an API on click before opening dropdown.
    */
   @property({ type: Boolean, reflect: true }) hasCustomClickHandler = false;
 
@@ -102,6 +107,7 @@ export class IaDropdown extends LitElement {
   @property({ type: Boolean, reflect: true }) closeOnBackdropClick = false;
 
   // Lifecycle methods
+
   async firstUpdated(): Promise<void> {
     // Wait for the next tick to ensure that the dropdown is in the DOM
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -261,23 +267,33 @@ export class IaDropdown extends LitElement {
 
   // Templates
 
+  /**
+   * Renders up and down carets
+   *
+   * @event click caretClicked()
+   * @event keydown caretKeyDown()
+   *
+   * @slot caret-up - Allow replacement of default up caret.
+   * @slot caret-down - Allow replacement of default down caret.
+   */
   get caretTemplate(): TemplateResult {
     if (!this.displayCaret) return html``;
 
     const tabindex = this.openViaCaret && !this.openViaButton ? '0' : undefined;
     const role = this.openViaCaret ? 'button' : undefined;
+
     return html`
       <span
         class="caret"
         tabindex=${ifDefined(tabindex)}
         role=${ifDefined(role)}
-        @click=${this.disabled ? nothing : this.caretClicked}
-        @keydown=${this.disabled ? nothing : this.caretKeyDown}
+        @click=${this.isDisabled ? nothing : this.caretClicked}
+        @keydown=${this.isDisabled ? nothing : this.caretKeyDown}
       >
-        <span ?hidden=${!this.open} class="caret-up-slot">
+        <span ?hidden=${!this.open} class="caret-up">
           <slot name="caret-up">${caretUp}</slot>
         </span>
-        <span ?hidden=${this.open} class="caret-down-slot">
+        <span ?hidden=${this.open} class="caret-down">
           <slot name="caret-down">${caretDown}</slot>
         </span>
       </span>
@@ -290,7 +306,9 @@ export class IaDropdown extends LitElement {
    * NOTE: tried to skip initial rendering of dropdown options with:
    *   if (!this.open) return html``;
    * This would also remove dropdown options from DOM on close.
-   * But because options may have events, this could pose a memory leak issue.
+   * But because options may have window events, this could create a memory leak.
+   *
+   * @slot list - Allow replacement of default {@interface optionInterface} dropdown list.
    */
   get dropdownTemplate(): TemplateResult {
     if (this.isCustomList) {
@@ -302,10 +320,13 @@ export class IaDropdown extends LitElement {
   /**
    * Optional template rendering transparent backdrop to capture clicks outside the
    * dropdown menu when open.
+   *
+   * @event click closeOptions()
+   * @event keyup closeOptions()
    */
-  private get backdropTemplate() {
-    if (!this.closeOnBackdropClick) return nothing;
-    if (!this.open) return nothing;
+  private get backdropTemplate(): TemplateResult {
+    if (!this.closeOnBackdropClick) return html``;
+    if (!this.open) return html``;
     return html`
       <div
         id="dropdown-backdrop"
@@ -320,10 +341,10 @@ export class IaDropdown extends LitElement {
       <div class="ia-dropdown-group">
         <button
           class="click-main"
-          @click=${this.hasCustomClickHandler
+          @click=${this.hasCustomClickHandler || this.isDisabled
             ? nothing
             : this.mainButtonClicked}
-          ?disabled=${this.disabled}
+          ?disabled=${this.isDisabled}
         >
           <span class="sr-only">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
@@ -382,6 +403,10 @@ export class IaDropdown extends LitElement {
         pointer-events: none;
         cursor: not-allowed;
         opacity: 0.5;
+        /* Disable text selection on disabled button */
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
       }
 
       button.click-main:hover {

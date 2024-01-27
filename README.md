@@ -32,6 +32,8 @@ const options = [{
 
 - **`open`** controls whether the dropdown menu is currently visible
   - default: `false`
+- **`isDisabled`** controls whether the main button and/or caret is disabled
+  - default: `false`
 - **`displayCaret`** controls whether the dropdown caret should be present
   - default: `false`
 - **`closeOnSelect`** controls whether selecting an option in the dropdown menu should close it
@@ -51,6 +53,8 @@ const options = [{
   - default: `options`
 -  **`isCustomList`** replaces default option list with slot `list` allowing a custom list component to be used with different option type and behavior
    - default: `false`
+-  **`hasCustomClickHandler`** controls whether mainbutton `@click` event overridden by ancestor `@click` or custom event
+   - default: `false`
 -  **`closeOnEscape`** controls whether the dropdown menu should close when the escape key is pressed
    - default: `false`
 -  **`closeOnBackdropClick`** controls whether the dropdown menu should close when the backdrop is clicked
@@ -67,6 +71,7 @@ const options = [{
 #### `<ia-dropdown>` events
 Listens for:
 - `closeDropdown` closes the dropdown menu
+
 Dispatches:
 - `optionSelected` when an option is selected in the dropdown menu
 

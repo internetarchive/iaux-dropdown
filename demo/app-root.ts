@@ -10,7 +10,7 @@ import {
 } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import '../src/ia-dropdown';
-import { optionInterface } from '../src/ia-dropdown';
+import { IaDropdown, optionInterface } from '../src/ia-dropdown';
 import '../src/ia-icon-label';
 import './item-userlists';
 import {
@@ -41,12 +41,6 @@ export class AppRoot extends LitElement {
   // Count for main button icon state
   @state() private selectedCount: number = 0;
 
-  // State for userlist dropdown
-  // Used in example where host component handles open/close
-  // ?hasCustomClickHandler=${true}
-  // @click=${() => this.toggleOpen()}
-  @state() private open: boolean = false;
-
   // Data for userlist dropdown
   @state() private userlistData: userlistDataInterface[] = [];
 
@@ -68,6 +62,9 @@ export class AppRoot extends LitElement {
   @query('#include-selected-option')
   private includeSelectedOptionCheck!: HTMLInputElement;
 
+  @query('#user-list-dropdown')
+  private userListDropdown!: IaDropdown;
+
   constructor() {
     super();
     // Copy sample userlist data
@@ -88,8 +85,8 @@ export class AppRoot extends LitElement {
     this.addEventListener('selectDropdown', eventListener as EventListener);
   }
 
-  toggleOpen() {
-    this.open = !this.open;
+  toggleUserListDropdown() {
+    this.userListDropdown.open = !this.userListDropdown.open;
   }
 
   get correctIcon(): SVGTemplateResult {
@@ -388,8 +385,8 @@ export class AppRoot extends LitElement {
 
       <div class="list-test">
         <ia-dropdown
+          id="user-list-dropdown"
           class="list-dropdown"
-          ?open=${this.open}
           ?displaycaret=${false}
           ?isDisabled=${this.disable}
           ?openViaButton=${true}
@@ -400,7 +397,12 @@ export class AppRoot extends LitElement {
           ?closeOnEscape=${true}
           ?closeOnBackdropClick=${true}
           ?hasCustomClickHandler=${true}
-          @click=${!this.disable ? this.toggleOpen : nothing}
+          @click=${this.disable
+            ? nothing
+            : (e: Event) => {
+                e.stopPropagation();
+                this.toggleUserListDropdown();
+              }}
         >
           <div class="list-title" slot="dropdown-label">${this.mainButton}</div>
           ${this.itemUserlists}

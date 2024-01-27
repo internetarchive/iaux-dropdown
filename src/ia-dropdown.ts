@@ -87,8 +87,14 @@ export class IaDropdown extends LitElement {
    *
    * Custom click handling needs to handle:
    * - enabling/disabling click events
-   * - this.open property
    * - this.isDisabled property
+   * - this.open property
+   *   Suggest using the instance's open property from ancestor:
+   *     @query('#custom-dropdown') customDropdown!: IaDropdown;
+   *     toggleDropdown = () => {
+   *       this.customDropdown.open = !this.customDropdown.open
+   *     }
+   *   @see app-root.ts - demo <ia-dropdown id="user-list-dropdown">
    *
    * Allows loading options from an API on click before opening dropdown.
    */

@@ -84,6 +84,7 @@ export class IaDropdown extends LitElement {
    * @click or custom event
    *
    * If true, prevents dropdown from opening, closing on main button click.
+   * Also prevents dropdown from opening, closing on caret click, if displayCaret.
    *
    * Custom click handling needs to handle:
    * - enabling/disabling click events
@@ -224,6 +225,21 @@ export class IaDropdown extends LitElement {
 
   // Options
 
+  /**
+   * Sets the default optionInterface[] options for the dropdown
+   *
+   * Options with different structure and behavior can be used
+   * by passing in a custom list via <slot name="list">
+   * and setting this.isCustomList = true
+   *
+   * @see app-root.ts - demo <ia-dropdown id="user-list-dropdown">
+   */
+
+  /**
+   * Renders a single option with click event handler
+   * @param availableOption {optionInterface}
+   * @returns
+   */
   renderOption(availableOption: optionInterface): TemplateResult {
     const { label, url = undefined, id } = availableOption;
     let component;
@@ -254,12 +270,10 @@ export class IaDropdown extends LitElement {
       this.dispatchEvent(
         new CustomEvent('optionSelected', {
           detail: { option },
-        })
+        }),
       );
-
       option.selectedHandler?.(option);
     }
-
     if (this.closeOnSelect) {
       this.closeOptions();
     }
@@ -271,7 +285,7 @@ export class IaDropdown extends LitElement {
 
     // Otherwise, exclude the selected option
     return this.options.filter(
-      option => this.selectedOption !== (option as optionInterface).id
+      option => this.selectedOption !== (option as optionInterface).id,
     );
   }
 
@@ -297,8 +311,12 @@ export class IaDropdown extends LitElement {
         class="caret"
         tabindex=${ifDefined(tabindex)}
         role=${ifDefined(role)}
-        @click=${this.isDisabled ? nothing : this.caretClicked}
-        @keydown=${this.isDisabled ? nothing : this.caretKeyDown}
+        @click=${this.isDisabled || this.hasCustomClickHandler
+          ? nothing
+          : this.caretClicked}
+        @keydown=${this.isDisabled || this.hasCustomClickHandler
+          ? nothing
+          : this.caretKeyDown}
       >
         <span ?hidden=${!this.open} class="caret-up">
           <slot name="caret-up">${caretUp}</slot>
@@ -351,7 +369,7 @@ export class IaDropdown extends LitElement {
       <div class="ia-dropdown-group">
         <button
           class="click-main"
-          @click=${this.hasCustomClickHandler || this.isDisabled
+          @click=${this.isDisabled || this.hasCustomClickHandler
             ? nothing
             : this.mainButtonClicked}
           ?disabled=${this.isDisabled}

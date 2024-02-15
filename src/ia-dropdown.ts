@@ -248,12 +248,12 @@ export class IaDropdown extends LitElement {
     if (url) {
       component = html`<a
         href=${url}
-        @click=${() => this.optionClicked(availableOption)}
+        @click=${(e: Event) => this.optionClicked(e, availableOption)}
         >${label}</a
       >`;
     } else {
       component = html`<button
-        @click=${() => this.optionClicked(availableOption)}
+        @click=${(e: Event) => this.optionClicked(e, availableOption)}
       >
         ${label}
       </button>`;
@@ -262,7 +262,8 @@ export class IaDropdown extends LitElement {
     return html`<li class=${selected}>${component}</li>`;
   }
 
-  optionClicked(option: optionInterface): void {
+  optionClicked(e: Event, option: optionInterface): void {
+    e.stopPropagation();
     // Don't emit an event for reselecting the same option
     if (this.selectedOption !== option.id) {
       this.selectedOption = option.id;

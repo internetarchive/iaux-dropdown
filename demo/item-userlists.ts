@@ -77,7 +77,7 @@ export class ItemUserlists extends LitElement {
     const selected = isSelected ? 'selected' : '';
     const component = html`<button
       id="${id}"
-      @click=${() => this.optionClicked(option)}
+      @click=${(e: Event) => this.optionClicked(e, option)}
     >
       ${label}
     </button> `;
@@ -85,7 +85,8 @@ export class ItemUserlists extends LitElement {
     return html`<li class=${selected}>${component}</li>`;
   }
 
-  optionClicked(option: userlistOptionInterface): void {
+  optionClicked(e: Event, option: userlistOptionInterface): void {
+    e.stopPropagation();
     this.dispatchEvent(
       new CustomEvent('optionSelected', {
         detail: { option },
@@ -157,6 +158,7 @@ export class ItemUserlists extends LitElement {
   }
 
   private closeDropdown(): void {
+    console.log('closeDropdown');
     this.dispatchEvent(
       new CustomEvent('closeDropdown', {
         bubbles: true,

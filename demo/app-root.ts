@@ -332,7 +332,7 @@ export class AppRoot extends LitElement {
           ?isDisabled=${this.disable}
           ?openViaButton=${false}
           ?openViaCaret=${true}
-          ?closeOnSelect=${false}
+          ?closeOnSelect=${this.closeOnSelect}
           ?includeSelectedOption=${this.includeSelectedOption}
           selectedOption=${this.selectedOptionId}
           .options=${[

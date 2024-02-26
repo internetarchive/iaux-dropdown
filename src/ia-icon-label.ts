@@ -79,6 +79,10 @@ export class IaIconLabel extends LitElement {
         overflow-wrap: break-word;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        /* Fixed line-height needed to fit unicode and emojis
+          https://stackoverflow.com/a/67807146
+        */
+        line-height: 1.2em;
         /* max-height needed for Safari browser */
         max-height: var(--labelTruncateHeight, 30px);
         max-width: var(--labelWidth, 100%);

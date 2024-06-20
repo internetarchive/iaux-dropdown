@@ -271,7 +271,7 @@ export class IaDropdown extends LitElement {
       this.dispatchEvent(
         new CustomEvent('optionSelected', {
           detail: { option },
-        }),
+        })
       );
       option.selectedHandler?.(option);
     }
@@ -286,7 +286,7 @@ export class IaDropdown extends LitElement {
 
     // Otherwise, exclude the selected option
     return this.options.filter(
-      option => this.selectedOption !== (option as optionInterface).id,
+      option => this.selectedOption !== (option as optionInterface).id
     );
   }
 
@@ -475,6 +475,8 @@ export class IaDropdown extends LitElement {
         position: absolute !important;
         width: 1px !important;
         white-space: nowrap !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
       }
 
       .caret {

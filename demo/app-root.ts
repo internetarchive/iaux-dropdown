@@ -72,7 +72,7 @@ export class AppRoot extends LitElement {
 
     // Initialize selected count for main button icon state
     this.selectedCount = this.userlistData.filter(
-      item => item.item_is_member,
+      item => item.item_is_member
     ).length;
 
     // Listen for select Dropdown event from item-userlists

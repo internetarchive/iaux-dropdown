@@ -15,7 +15,7 @@ describe('IaDropdown', () => {
   it('displays the provided icon in the `slot[name="icon"`', async () => {
     const fooLabel = html`<p id="bunnyhop" slot="icon">foo</p>`;
     const el = await fixture<IaIconLabel>(
-      html`<ia-icon-label> ${fooLabel} </ia-icon-label>`
+      html`<ia-icon-label> ${fooLabel} </ia-icon-label>`,
     );
 
     const iconSlot = el?.shadowRoot?.querySelector('slot[name="icon"]');
@@ -27,7 +27,7 @@ describe('IaDropdown', () => {
   it('displays generic slot', async () => {
     const barLabel = html`<p id="carrotcake">bar</p>`;
     const el = await fixture<IaIconLabel>(
-      html`<ia-icon-label> ${barLabel} </ia-icon-label>`
+      html`<ia-icon-label> ${barLabel} </ia-icon-label>`,
     );
 
     const allSlots = el?.shadowRoot?.querySelectorAll('slot') || [];
@@ -38,7 +38,7 @@ describe('IaDropdown', () => {
     expect(iconSlotEls?.length).to.equal(0);
     expect(labelSlotEls?.length).to.equal(1);
     expect((labelSlotEls[0] as Element).getAttribute('id')).to.equal(
-      'carrotcake'
+      'carrotcake',
     );
   });
 });

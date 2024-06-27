@@ -90,7 +90,7 @@ export class ItemUserlists extends LitElement {
     this.dispatchEvent(
       new CustomEvent('optionSelected', {
         detail: { option },
-      })
+      }),
     );
     option.selectedHandler?.(option);
   }
@@ -151,7 +151,7 @@ export class ItemUserlists extends LitElement {
         detail: { selected: selectedCount },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
     console.log('onSelected', option);
     this.closeDropdown();
@@ -163,7 +163,7 @@ export class ItemUserlists extends LitElement {
       new CustomEvent('closeDropdown', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 

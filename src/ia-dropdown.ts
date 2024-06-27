@@ -475,6 +475,8 @@ export class IaDropdown extends LitElement {
         position: absolute !important;
         width: 1px !important;
         white-space: nowrap !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
       }
 
       .caret {

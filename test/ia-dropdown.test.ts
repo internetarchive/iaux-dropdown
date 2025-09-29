@@ -1,5 +1,6 @@
 /* eslint-disable dot-notation */
-import { aTimeout, html, fixture, expect } from '@open-wc/testing';
+import { aTimeout, fixture, expect } from '@open-wc/testing';
+import { html } from 'lit';
 import sinon from 'sinon';
 
 import type { IaDropdown, optionInterface } from '../src/ia-dropdown';

@@ -1,5 +1,12 @@
-import { html, css, LitElement, TemplateResult, nothing } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import {
+  html,
+  css,
+  LitElement,
+  TemplateResult,
+  nothing,
+  PropertyValues,
+} from 'lit';
+import { property, query, customElement } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
 import caretUp from './assets/icons/caret-up';
@@ -53,6 +60,11 @@ export class IaDropdown extends LitElement {
    * row interactive. However, either or both can be used or hidden independently.
    */
   @property({ type: Boolean }) openViaCaret = true;
+
+  /**
+   * Whether to use a popover element for the dropdown menu. Default false.
+   */
+  @property({ type: Boolean }) usePopover = false;
 
   /**
    * Specifies whether the currently-selected option should be shown in the dropdown menu.
@@ -114,13 +126,25 @@ export class IaDropdown extends LitElement {
    */
   @property({ type: Boolean, reflect: true }) closeOnBackdropClick = false;
 
+  @query('.ia-dropdown-group') private container!: HTMLDivElement;
+
+  @query('#dropdown-main') private dropdownMenu!: HTMLUListElement;
+
   // Lifecycle methods
 
   async firstUpdated(): Promise<void> {
     // Wait for the next tick to ensure that the dropdown is in the DOM
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise(resolve => {
+      setTimeout(resolve, 0);
+    });
 
     this.addEventListener('closeDropdown', this.closeOptions);
+  }
+
+  protected willUpdate(changed: PropertyValues): void {
+    if (changed.has('open')) {
+      this.updatePopoverState();
+    }
   }
 
   disconnectedCallback(): void {
@@ -172,10 +196,26 @@ export class IaDropdown extends LitElement {
       e.stopPropagation();
     }
     this.open = false;
+    this.updatePopoverState();
   };
 
   toggleOptions(): void {
     this.open = !this.open;
+    this.updatePopoverState();
+  }
+
+  private updatePopoverState(): void {
+    if (!this.usePopover) return;
+    this.dropdownMenu?.togglePopover?.(this.open);
+    if (this.open) this.positionDropdownMenu();
+  }
+
+  private positionDropdownMenu(): void {
+    if (!this.dropdownMenu) return;
+    const containerRect = this.container.getBoundingClientRect();
+    this.dropdownMenu.style.left = `${containerRect.left}px`;
+    this.dropdownMenu.style.top = `${containerRect.bottom}px`;
+    this.dropdownMenu.style.minWidth = `${containerRect.width}px`;
   }
 
   private mainButtonClicked(): void {
@@ -380,7 +420,11 @@ export class IaDropdown extends LitElement {
           ${this.caretTemplate}
         </button>
 
-        <ul class="dropdown-main ${this.dropdownState}">
+        <ul
+          id="dropdown-main"
+          class=${this.dropdownState}
+          ?popover=${this.usePopover}
+        >
           ${this.dropdownTemplate}
         </ul>
 
@@ -506,13 +550,13 @@ export class IaDropdown extends LitElement {
         z-index: var(--dropdownListZIndex, 2);
       }
 
-      ul.dropdown-main.closed {
+      #dropdown-main.closed {
         visibility: hidden;
         height: 1px;
         width: 1px;
       }
 
-      ul.dropdown-main {
+      #dropdown-main {
         position: var(--dropdownListPosition, absolute);
         list-style: none;
         margin: var(--dropdownOffsetTop, 5px) 0 0 0;
@@ -544,49 +588,49 @@ export class IaDropdown extends LitElement {
         overflow: hidden;
       }
 
-      ul.dropdown-main li:hover {
+      #dropdown-main li:hover {
         background-color: ${dropdownHoverBgColor};
         color: var(--dropdownHoverTextColor, #fff);
         list-style: none;
         cursor: pointer;
       }
 
-      ul.dropdown-main li:hover:first-child {
+      #dropdown-main li:hover:first-child {
         border-top-color: ${dropdownHoverBgColor};
       }
 
-      ul.dropdown-main li:hover:last-child {
+      ul#dropdown-main li:hover:last-child {
         border-bottom-color: ${dropdownHoverBgColor};
       }
 
-      ul.dropdown-main li:hover:not(:first-child) {
+      #dropdown-main li:hover:not(:first-child) {
         border-top: 0.5px solid var(--dropdownHoverTopBottomBorderColor, #333);
       }
-      ul.dropdown-main li:hover:not(:last-child) {
+      #dropdown-main li:hover:not(:last-child) {
         border-bottom: 0.5px solid
           var(--dropdownHoverTopBottomBorderColor, #333);
       }
 
-      ul.dropdown-main li.selected:last-child {
+      #dropdown-main li.selected:last-child {
         border-bottom-color: ${dropdownSelectedBgColor};
       }
 
-      ul.dropdown-main li.selected:first-child {
+      #dropdown-main li.selected:first-child {
         border-top-color: ${dropdownSelectedBgColor};
       }
 
-      ul.dropdown-main li:hover > *,
-      ul.dropdown-main li:focus-within > * {
+      #dropdown-main li:hover > *,
+      #dropdown-main li:focus-within > * {
         background-color: ${dropdownHoverBgColor};
         color: var(--dropdownHoverTextColor, #fff);
       }
 
-      ul.dropdown-main li.selected > * {
+      #dropdown-main li.selected > * {
         background-color: ${dropdownSelectedBgColor};
         color: var(--dropdownSelectedTextColor, #2c2c2c);
       }
 
-      ul.dropdown-main li {
+      #dropdown-main li {
         background: ${dropdownBgColor};
         list-style: none;
         height: 30px;
@@ -595,7 +639,7 @@ export class IaDropdown extends LitElement {
         border-top: 0.5px solid ${dropdownBgColor};
       }
 
-      ul.dropdown-main li button {
+      #dropdown-main li button {
         background: none;
         color: inherit;
         border: none;
@@ -604,24 +648,24 @@ export class IaDropdown extends LitElement {
         outline: inherit;
       }
 
-      ul.dropdown-main li a {
+      #dropdown-main li a {
         text-decoration: none;
         display: block;
         box-sizing: border-box;
       }
 
-      ul.dropdown-main li:first-child {
+      #dropdown-main li:first-child {
         border-top-left-radius: var(--dropdownBorderTopLeftRadius, 4px);
         border-top-right-radius: var(--dropdownBorderTopRightRadius, 4px);
       }
 
-      ul.dropdown-main li:last-child {
+      #dropdown-main li:last-child {
         border-bottom-right-radius: var(--dropdownBorderBottomRightRadius, 4px);
         border-bottom-left-radius: var(--dropdownBorderBottomLeftRadius, 4px);
       }
 
       /* cover the list with the label */
-      ul.dropdown-main li > * > :first-child {
+      #dropdown-main li > * > :first-child {
         margin: 0;
         display: flex;
         align-items: center;
@@ -636,7 +680,7 @@ export class IaDropdown extends LitElement {
         box-sizing: border-box;
       }
 
-      ul.dropdown-main li > * {
+      #dropdown-main li > * {
         width: 100%;
         height: inherit;
         color: ${dropdownTextColor};

@@ -373,6 +373,47 @@ export class AppRoot extends LitElement {
       </div>
 
       <hr />
+      <section><h2>Testing popover menu</h2></section>
+
+      <div class="popover-test">
+        <ia-dropdown
+          class="popover-menu"
+          usePopover
+          ?displaycaret=${true}
+          ?isDisabled=${this.disable}
+          ?openViaButton=${false}
+          ?openViaCaret=${true}
+          ?closeOnSelect=${this.closeOnSelect}
+          ?includeSelectedOption=${this.includeSelectedOption}
+          selectedOption=${this.selectedOptionId}
+          .options=${[
+            {
+              selectedHandler: (option: optionInterface) =>
+                this.onSelected(option),
+              label: 'Option 1',
+              id: 'option1',
+            } as optionInterface,
+            {
+              selectedHandler: (option: optionInterface) =>
+                this.onSelected(option),
+              label: 'Option 2',
+              id: 'option2',
+            } as optionInterface,
+            {
+              selectedHandler: (option: optionInterface) =>
+                this.onSelected(option),
+              label: 'Option 3',
+              id: 'option3',
+            } as optionInterface,
+          ]}
+        >
+          <span slot="dropdown-label">
+            ${this.selectedOption?.label ?? 'Select an option'}
+          </span>
+        </ia-dropdown>
+      </div>
+
+      <hr />
       <section><h2>Testing userlist check dropdown</h2></section>
       <ul>
         <li>Esc key to close</li>
@@ -445,7 +486,8 @@ export class AppRoot extends LitElement {
     }
 
     .slotted-test,
-    .list-test {
+    .list-test,
+    .popover-test {
       padding: 10px 0 0 10px;
       background-color: white;
       height: auto;
@@ -480,6 +522,13 @@ export class AppRoot extends LitElement {
       --dropdownCaretColor: #222;
       --caretPadding: 0 0 6px 5px;
       --dropdownListPosition: relative;
+    }
+
+    ia-dropdown.popover-menu {
+      --dropdownCaretColor: #222;
+      color: #222;
+      display: inline-block;
+      height: 25px;
     }
 
     .action-bar-text {

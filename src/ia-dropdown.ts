@@ -352,6 +352,7 @@ export class IaDropdown extends LitElement {
         class="caret"
         tabindex=${ifDefined(tabindex)}
         role=${ifDefined(role)}
+        aria-labelledby="caret-label"
         @click=${this.isDisabled || this.hasCustomClickHandler
           ? nothing
           : this.caretClicked}
@@ -415,7 +416,7 @@ export class IaDropdown extends LitElement {
             : this.mainButtonClicked}
           ?disabled=${this.isDisabled}
         >
-          <span class="sr-only">Toggle ${this.optionGroup}</span>
+          <span class="sr-only" id="caret-label">Toggle ${this.optionGroup}</span>
           <slot name="dropdown-label"></slot>
           ${this.caretTemplate}
         </button>

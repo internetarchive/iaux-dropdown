@@ -6,7 +6,12 @@ import {
   nothing,
   PropertyValues,
 } from 'lit';
-import { property, query, customElement } from 'lit/decorators.js';
+import {
+  property,
+  query,
+  customElement,
+  queryAssignedElements,
+} from 'lit/decorators.js';
 
 import caretUp from './assets/icons/caret-up';
 import caretDown from './assets/icons/caret-down';
@@ -121,6 +126,11 @@ export class IaDropdown extends LitElement {
 
   @query('#dropdown-main') private dropdownMenu!: HTMLUListElement;
 
+  @query('.click-main') private mainButton!: HTMLButtonElement;
+
+  @queryAssignedElements({ slot: 'dropdown-label' })
+  private mainButtonLabelSlotted!: HTMLElement[];
+
   // Lifecycle methods
 
   async firstUpdated(): Promise<void> {
@@ -212,6 +222,9 @@ export class IaDropdown extends LitElement {
   private mainButtonClicked(): void {
     if (this.openViaButton) {
       this.toggleOptions();
+    } else {
+      // Refer the click to the button's first slotted child instead
+      this.mainButtonLabelSlotted[0]?.click();
     }
   }
 
@@ -269,6 +282,7 @@ export class IaDropdown extends LitElement {
     }
     if (this.closeOnSelect) {
       this.closeOptions();
+      this.mainButton.focus(); // Move focus to the main button if we're closing the menu
     }
   }
 

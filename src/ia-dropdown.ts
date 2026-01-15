@@ -12,6 +12,7 @@ import {
   customElement,
   queryAssignedElements,
 } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 
 import caretUp from './assets/icons/caret-up';
 import caretDown from './assets/icons/caret-down';
@@ -400,6 +401,14 @@ export class IaDropdown extends LitElement {
     `;
   }
 
+  /**
+   * Whether the caret element should be nested inside the main button (as an inert icon).
+   * If false, then the caret should be rendered as a separate button beside the main one.
+   */
+  private get shouldNestCaretInButton(): boolean {
+    return this.openViaButton;
+  }
+
   render() {
     return html`
       <div class="ia-dropdown-group">
@@ -417,9 +426,9 @@ export class IaDropdown extends LitElement {
               >Toggle ${this.optionGroup}</span
             >
             <slot name="dropdown-label"></slot>
-            ${this.openViaButton ? this.caretTemplate : nothing}
+            ${when(this.shouldNestCaretInButton, () => this.caretTemplate)}
           </button>
-          ${this.openViaButton ? nothing : this.caretTemplate}
+          ${when(!this.shouldNestCaretInButton, () => this.caretTemplate)}
         </div>
 
         <ul

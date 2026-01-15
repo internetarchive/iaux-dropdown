@@ -53,7 +53,7 @@ export class IaDropdown extends LitElement {
    * not change the behavior of clicking the caret (if shown), which _always_ opens the dropdown
    * menu.
    *
-   * Defaults to true, but can be disabled if clicking the
+   * Defaults to true, but can be disabled if only caret clicks should toggle the menu.
    */
   @property({ type: Boolean }) openViaButton = true;
 

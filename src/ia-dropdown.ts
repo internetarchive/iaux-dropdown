@@ -1,13 +1,11 @@
+import { html, css, LitElement, TemplateResult, PropertyValues } from 'lit';
 import {
-  html,
-  css,
-  LitElement,
-  TemplateResult,
-  nothing,
-  PropertyValues,
-} from 'lit';
-import { property, query, customElement } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
+  property,
+  query,
+  customElement,
+  queryAssignedElements,
+} from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 
 import caretUp from './assets/icons/caret-up';
 import caretDown from './assets/icons/caret-down';
@@ -45,21 +43,13 @@ export class IaDropdown extends LitElement {
   @property({ type: Boolean }) closeOnSelect = false;
 
   /**
-   * Specifies whether pressing the main button (aside from the caret) should open
-   * the dropdown.
+   * Specifies whether pressing the main button itself should open the dropdown. This does
+   * not change the behavior of clicking the caret (if shown), which _always_ opens the dropdown
+   * menu.
    *
-   * Both this and `openViaCaret` default to true, making the entire main-button-and-caret
-   * row interactive. However, either or both can be used or hidden independently.
+   * Defaults to true, but can be disabled if only caret clicks should toggle the menu.
    */
   @property({ type: Boolean }) openViaButton = true;
-
-  /**
-   * Specifies whether pressing the caret element (if present) should open the dropdown.
-   *
-   * Both this and `openViaButton` default to true, making the entire main-button-and-caret
-   * row interactive. However, either or both can be used or hidden independently.
-   */
-  @property({ type: Boolean }) openViaCaret = true;
 
   /**
    * Whether to use a popover element for the dropdown menu. Default false.
@@ -129,6 +119,11 @@ export class IaDropdown extends LitElement {
   @query('.ia-dropdown-group') private container!: HTMLDivElement;
 
   @query('#dropdown-main') private dropdownMenu!: HTMLUListElement;
+
+  @query('.click-main') private mainButton!: HTMLButtonElement;
+
+  @queryAssignedElements({ slot: 'dropdown-label' })
+  private mainButtonLabelSlotted!: HTMLElement[];
 
   // Lifecycle methods
 
@@ -219,49 +214,27 @@ export class IaDropdown extends LitElement {
   }
 
   private mainButtonClicked(): void {
-    // If this click was already handled on the caret, we should ignore it so
-    // that we don't toggle the options twice.
-    if (this.handlingCaretClick) {
-      this.handlingCaretClick = false;
-      return;
-    }
-
     if (this.openViaButton) {
       this.toggleOptions();
+    } else {
+      // Refer the click to the button's first slotted child instead
+      this.mainButtonLabelSlotted[0]?.click();
     }
   }
 
-  private caretInteracted(): void {
-    if (this.openViaCaret) {
-      this.toggleOptions();
+  private mainButtonKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      this.mainButtonClicked();
+      e.preventDefault();
     }
-  }
-
-  private caretClicked(): void {
-    // Prevent the main button handler from running too
-    this.handlingCaretClick = true;
-    this.caretInteracted();
   }
 
   private caretKeyDown(e: KeyboardEvent): void {
     if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault(); // Spacebar scrolls the page by default
-      this.caretInteracted();
+      this.toggleOptions();
+      e.preventDefault();
     }
   }
-
-  /**
-   * In cases where both the main button and its caret are interactive, we don't
-   * want a click on the caret to trigger effects on both. However, stopping
-   * propagation of the caret clicks entirely would also prevent consumers of this
-   * component from receiving them, which is undesirable.
-   *
-   * As a workaround, this flag is set when we handle a click on the caret, causing
-   * the main button handler to ignore that click (and accordingly clear this flag).
-   * In essence, it causes event propagation to locally skip the main button,
-   * while still allowing the event to bubble out of the component.
-   */
-  private handlingCaretClick = false;
 
   // Options
 
@@ -299,7 +272,7 @@ export class IaDropdown extends LitElement {
       </button>`;
     }
 
-    return html`<li class=${selected}>${component}</li>`;
+    return html`<li role="menuitem" class=${selected}>${component}</li>`;
   }
 
   optionClicked(e: Event, option: optionInterface): void {
@@ -317,6 +290,7 @@ export class IaDropdown extends LitElement {
     }
     if (this.closeOnSelect) {
       this.closeOptions();
+      this.mainButton.focus(); // Move focus to the main button if we're closing the menu
     }
   }
 
@@ -333,6 +307,32 @@ export class IaDropdown extends LitElement {
   // Templates
 
   /**
+   * Template for the "up" caret icon shown when the dropdown is open.
+   * Renders its contents within a named "caret-up" slot so that custom icons
+   * can be provided to override the default one.
+   */
+  private get caretUpTemplate(): TemplateResult {
+    return html`
+      <span ?hidden=${!this.open} class="caret-up">
+        <slot name="caret-up">${caretUp}</slot>
+      </span>
+    `;
+  }
+
+  /**
+   * Template for the "down" caret icon shown when the dropdown is closed.
+   * Renders its contents within a named "caret-down" slot so that custom icons
+   * can be provided to override the default one.
+   */
+  private get caretDownTemplate(): TemplateResult {
+    return html`
+      <span ?hidden=${this.open} class="caret-down">
+        <slot name="caret-down">${caretDown}</slot>
+      </span>
+    `;
+  }
+
+  /**
    * Renders up and down carets
    *
    * @event click caretClicked()
@@ -344,29 +344,34 @@ export class IaDropdown extends LitElement {
   get caretTemplate(): TemplateResult {
     if (!this.displayCaret) return html``;
 
-    const tabindex = this.openViaCaret && !this.openViaButton ? '0' : undefined;
-    const role = this.openViaCaret ? 'button' : undefined;
+    // When clicking the button has the same effect as the caret (opening the dropdown),
+    // we just render the caret as inert content inside the button.
+    if (this.openViaButton) {
+      return html`
+        <span class="caret" aria-hidden="true">
+          ${this.caretUpTemplate} ${this.caretDownTemplate}
+        </span>
+      `;
+    }
 
+    // However, when clicking the button should _not_ open the dropdown, the caret
+    // should instead be rendered as a standalone button as it is the only means of
+    // controlling the dropdown state.
     return html`
-      <span
+      <button
         class="caret"
-        tabindex=${ifDefined(tabindex)}
-        role=${ifDefined(role)}
         aria-labelledby="caret-label"
-        @click=${this.isDisabled || this.hasCustomClickHandler
-          ? nothing
-          : this.caretClicked}
-        @keydown=${this.isDisabled || this.hasCustomClickHandler
-          ? nothing
-          : this.caretKeyDown}
+        aria-haspopup="true"
+        aria-expanded=${this.open}
+        @click=${when(this.shouldAttachEventHandlers, () => this.toggleOptions)}
+        @keydown=${when(
+          this.shouldAttachEventHandlers,
+          () => this.caretKeyDown,
+        )}
+        ?disabled=${this.isDisabled}
       >
-        <span ?hidden=${!this.open} class="caret-up">
-          <slot name="caret-up">${caretUp}</slot>
-        </span>
-        <span ?hidden=${this.open} class="caret-down">
-          <slot name="caret-down">${caretDown}</slot>
-        </span>
-      </span>
+        ${this.caretUpTemplate} ${this.caretDownTemplate}
+      </button>
     `;
   }
 
@@ -406,24 +411,53 @@ export class IaDropdown extends LitElement {
     `;
   }
 
+  /**
+   * Whether the caret element should be nested inside the main button (as an inert icon).
+   * If false, then the caret should be rendered as a separate button beside the main one.
+   */
+  private get shouldNestCaretInButton(): boolean {
+    return this.openViaButton;
+  }
+
+  /**
+   * Whether the main button (or caret, if main button is disabled) should have click and
+   * keydown handlers attached to it.
+   */
+  private get shouldAttachEventHandlers(): boolean {
+    return !this.isDisabled && !this.hasCustomClickHandler;
+  }
+
   render() {
     return html`
       <div class="ia-dropdown-group">
-        <button
-          class="click-main"
-          @click=${this.isDisabled || this.hasCustomClickHandler
-            ? nothing
-            : this.mainButtonClicked}
-          ?disabled=${this.isDisabled}
-        >
-          <span class="sr-only" id="caret-label">Toggle ${this.optionGroup}</span>
-          <slot name="dropdown-label"></slot>
-          ${this.caretTemplate}
-        </button>
+        <div class="button-row">
+          <button
+            class="click-main"
+            aria-haspopup=${this.openViaButton}
+            aria-expanded=${this.open}
+            @click=${when(
+              this.shouldAttachEventHandlers,
+              () => this.mainButtonClicked,
+            )}
+            @keydown=${when(
+              this.shouldAttachEventHandlers,
+              () => this.mainButtonKeyDown,
+            )}
+            ?disabled=${this.isDisabled}
+          >
+            <span class="sr-only" id="caret-label"
+              >Toggle ${this.optionGroup}</span
+            >
+            <slot name="dropdown-label"></slot>
+            ${when(this.shouldNestCaretInButton, () => this.caretTemplate)}
+          </button>
+          ${when(!this.shouldNestCaretInButton, () => this.caretTemplate)}
+        </div>
 
         <ul
           id="dropdown-main"
           class=${this.dropdownState}
+          role="menu"
           ?popover=${this.usePopover}
         >
           ${this.dropdownTemplate}
@@ -455,6 +489,10 @@ export class IaDropdown extends LitElement {
       ::slotted(svg.caret-down-svg) {
         fill: var(--dropdownCaretColor, #fff);
         vertical-align: middle;
+      }
+
+      .button-row {
+        display: flex;
       }
 
       button.click-main {
@@ -530,6 +568,13 @@ export class IaDropdown extends LitElement {
         align-self: stretch;
         align-items: center;
         padding: var(--caretPadding, 0px);
+      }
+
+      button.caret {
+        appearance: none;
+        background: none;
+        border: none;
+        cursor: pointer;
       }
 
       .caret svg {

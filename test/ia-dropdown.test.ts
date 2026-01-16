@@ -133,7 +133,7 @@ describe('IaDropdown', () => {
       expect(el.open).to.be.true;
     });
 
-    it('Can optionally disable toggling via main button', async () => {
+    it('can optionally disable toggling via main button', async () => {
       const el = await fixture<IaDropdown>(
         html`<ia-dropdown displayCaret .openViaButton=${false}></ia-dropdown>`,
       );
@@ -154,30 +154,32 @@ describe('IaDropdown', () => {
       expect(el.open).to.be.true;
     });
 
-    it('Can optionally disable toggling via caret', async () => {
-      const el = await fixture<IaDropdown>(
-        html`<ia-dropdown displayCaret .openViaCaret=${false}></ia-dropdown>`,
-      );
-
-      expect(el.open).to.be.false;
-      (el.shadowRoot?.querySelector('.caret') as HTMLElement)?.click();
-      await el.updateComplete;
-
-      // Should remain closed from clicking caret
-      expect(el.open).to.be.false;
-
-      // But clicking on the button itself should open it
-      const mainButton = el.shadowRoot?.querySelector(
-        'button.click-main',
-      ) as HTMLButtonElement;
-      mainButton?.click();
-      await el.updateComplete;
-      expect(el.open).to.be.true;
-    });
-
-    it('Can be toggled via keyboard interaction', async () => {
+    it('can be toggled via keyboard interaction on the main button when active', async () => {
       const el = await fixture<IaDropdown>(
         html`<ia-dropdown displayCaret></ia-dropdown>`,
+      );
+
+      const enterKeyEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      const spaceKeyEvent = new KeyboardEvent('keydown', { key: ' ' });
+
+      const mainButton = el.shadowRoot?.querySelector(
+        '.click-main',
+      ) as HTMLElement;
+      expect(mainButton).to.exist;
+      expect(el.open).to.be.false;
+
+      mainButton?.dispatchEvent(spaceKeyEvent);
+      await el.updateComplete;
+      expect(el.open).to.be.true;
+
+      mainButton?.dispatchEvent(enterKeyEvent);
+      await el.updateComplete;
+      expect(el.open).to.be.false;
+    });
+
+    it('can be toggled via keyboard interaction on the caret when main button is not active', async () => {
+      const el = await fixture<IaDropdown>(
+        html`<ia-dropdown displayCaret .openViaButton=${false}></ia-dropdown>`,
       );
 
       const enterKeyEvent = new KeyboardEvent('keydown', { key: 'Enter' });

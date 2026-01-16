@@ -1,11 +1,4 @@
-import {
-  html,
-  css,
-  LitElement,
-  TemplateResult,
-  nothing,
-  PropertyValues,
-} from 'lit';
+import { html, css, LitElement, TemplateResult, PropertyValues } from 'lit';
 import {
   property,
   query,
@@ -229,6 +222,20 @@ export class IaDropdown extends LitElement {
     }
   }
 
+  private mainButtonKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      this.mainButtonClicked();
+      e.preventDefault();
+    }
+  }
+
+  private caretKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      this.toggleOptions();
+      e.preventDefault();
+    }
+  }
+
   // Options
 
   /**
@@ -356,9 +363,12 @@ export class IaDropdown extends LitElement {
         aria-labelledby="caret-label"
         aria-haspopup="true"
         aria-expanded=${this.open}
-        @click=${this.isDisabled || this.hasCustomClickHandler
-          ? nothing
-          : this.toggleOptions}
+        @click=${when(this.shouldAttachEventHandlers, () => this.toggleOptions)}
+        @keydown=${when(
+          this.shouldAttachEventHandlers,
+          () => this.caretKeyDown,
+        )}
+        ?disabled=${this.isDisabled}
       >
         ${this.caretUpTemplate} ${this.caretDownTemplate}
       </button>
@@ -409,6 +419,14 @@ export class IaDropdown extends LitElement {
     return this.openViaButton;
   }
 
+  /**
+   * Whether the main button (or caret, if main button is disabled) should have click and
+   * keydown handlers attached to it.
+   */
+  private get shouldAttachEventHandlers(): boolean {
+    return !this.isDisabled && !this.hasCustomClickHandler;
+  }
+
   render() {
     return html`
       <div class="ia-dropdown-group">
@@ -417,9 +435,14 @@ export class IaDropdown extends LitElement {
             class="click-main"
             aria-haspopup=${this.openViaButton}
             aria-expanded=${this.open}
-            @click=${this.isDisabled || this.hasCustomClickHandler
-              ? nothing
-              : this.mainButtonClicked}
+            @click=${when(
+              this.shouldAttachEventHandlers,
+              () => this.mainButtonClicked,
+            )}
+            @keydown=${when(
+              this.shouldAttachEventHandlers,
+              () => this.mainButtonKeyDown,
+            )}
             ?disabled=${this.isDisabled}
           >
             <span class="sr-only" id="caret-label"

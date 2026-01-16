@@ -245,15 +245,6 @@ export class AppRoot extends LitElement {
         },
       })}
       ${this.checkboxRowTemplate({
-        id: 'open-via-caret',
-        label: 'Open via caret',
-        isChecked: this.openViaCaret,
-        isDisabled: !this.displayCaret,
-        onChange: () => {
-          this.openViaCaret = this.openViaCaretCheck.checked;
-        },
-      })}
-      ${this.checkboxRowTemplate({
         id: 'close-on-select',
         label: 'Close dropdown upon selection',
         isChecked: this.closeOnSelect,
@@ -283,7 +274,6 @@ export class AppRoot extends LitElement {
         ?displayCaret=${this.displayCaret}
         ?isDisabled=${this.disable}
         ?openViaButton=${this.openViaButton}
-        ?openViaCaret=${this.openViaCaret}
         ?closeOnSelect=${this.closeOnSelect}
         ?closeOnBackdropClick=${true}
         ?includeSelectedOption=${this.includeSelectedOption}
@@ -331,7 +321,6 @@ export class AppRoot extends LitElement {
           ?displaycaret=${true}
           ?isDisabled=${this.disable}
           ?openViaButton=${false}
-          ?openViaCaret=${true}
           ?closeOnSelect=${this.closeOnSelect}
           ?includeSelectedOption=${this.includeSelectedOption}
           selectedOption=${this.selectedOptionId}
@@ -382,7 +371,6 @@ export class AppRoot extends LitElement {
           ?displaycaret=${true}
           ?isDisabled=${this.disable}
           ?openViaButton=${false}
-          ?openViaCaret=${true}
           ?closeOnSelect=${this.closeOnSelect}
           ?includeSelectedOption=${this.includeSelectedOption}
           selectedOption=${this.selectedOptionId}
@@ -431,7 +419,6 @@ export class AppRoot extends LitElement {
           ?displaycaret=${false}
           ?isDisabled=${this.disable}
           ?openViaButton=${true}
-          ?openViaCaret=${false}
           ?closeOnSelect=${true}
           ?includeSelectedOption=${true}
           ?isCustomList=${true}

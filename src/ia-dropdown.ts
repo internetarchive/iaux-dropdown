@@ -476,6 +476,8 @@ export class IaDropdown extends LitElement {
     const dropdownTextColor = css`var(--dropdownTextColor, #fff)`;
     const dropdownHoverBgColor = css`var(--dropdownHoverBgColor, rgba(255, 255, 255, 0.3))`;
     const dropdownSelectedBgColor = css`var(--dropdownSelectedBgColor, #fff)`;
+    const dropdownMainButtonBgColor = css`var(--dropdownMainButtonBgColor, transparent)`;
+    const dropdownTextAlign = css`var(--dropdownTextAlign, inherit)`;
 
     return css`
       :host {
@@ -496,7 +498,7 @@ export class IaDropdown extends LitElement {
       }
 
       button.click-main {
-        background: transparent;
+        background: ${dropdownMainButtonBgColor};
         color: inherit;
         padding: var(--dropdownMainButtonPadding, 0px);
         border: var(--dropdownMainButtonBorder, none);
@@ -522,16 +524,25 @@ export class IaDropdown extends LitElement {
       }
 
       button.click-main:hover {
-        background-color: var(--dropdownMainButtonHoverBgColor, inherit);
+        background-color: var(
+          --dropdownMainButtonHoverBgColor,
+          ${dropdownMainButtonBgColor}
+        );
       }
 
       button.click-main:focus,
       button.click-main:focus-visible {
-        background-color: var(--dropdownMainButtonFocusBgColor, inherit);
+        background-color: var(
+          --dropdownMainButtonFocusBgColor,
+          ${dropdownMainButtonBgColor}
+        );
       }
 
       button.click-main:active {
-        background-color: var(--dropdownMainButtonActiveBgColor, inherit);
+        background-color: var(
+          --dropdownMainButtonActiveBgColor,
+          ${dropdownMainButtonBgColor}
+        );
       }
 
       button slot[name='dropdown-label'] {
@@ -606,7 +617,7 @@ export class IaDropdown extends LitElement {
         position: var(--dropdownListPosition, absolute);
         list-style: none;
         margin: var(--dropdownOffsetTop, 5px) 0 0 0;
-        padding: 0;
+        padding: var(--dropdownPadding, 0);
         color: ${dropdownTextColor};
         background: ${dropdownBgColor};
 
@@ -730,8 +741,9 @@ export class IaDropdown extends LitElement {
         width: 100%;
         height: inherit;
         color: ${dropdownTextColor};
-        background: transparent;
-        padding: 0;
+        background: var(--dropdownItemButtonBgColor, transparent);
+        padding: var(--dropdownItemButtonPadding, 0);
+        text-align: ${dropdownTextAlign};
       }
     `;
   }

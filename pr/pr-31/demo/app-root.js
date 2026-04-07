@@ -141,6 +141,7 @@ fill=""></path>
 
       .button-row {
         display: flex;
+        height: 100%;
       }
 
       button.click-main {

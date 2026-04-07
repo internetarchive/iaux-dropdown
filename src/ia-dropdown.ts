@@ -495,6 +495,7 @@ export class IaDropdown extends LitElement {
 
       .button-row {
         display: flex;
+        height: 100%;
       }
 
       button.click-main {

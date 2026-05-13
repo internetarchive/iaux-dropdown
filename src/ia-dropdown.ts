@@ -429,7 +429,7 @@ export class IaDropdown extends LitElement {
 
   render() {
     return html`
-      <div class="ia-dropdown-group">
+      <div class="ia-dropdown-group ${this.open ? 'open' : ''}">
         <div class="button-row">
           <button
             class="click-main"

@@ -478,6 +478,7 @@ export class IaDropdown extends LitElement {
     const dropdownSelectedBgColor = css`var(--dropdownSelectedBgColor, #fff)`;
     const dropdownMainButtonBgColor = css`var(--dropdownMainButtonBgColor, transparent)`;
     const dropdownTextAlign = css`var(--dropdownTextAlign, inherit)`;
+    const dropdownListZIndex = css`var(--dropdownListZIndex, 2)`;
 
     return css`
       :host {
@@ -511,7 +512,13 @@ export class IaDropdown extends LitElement {
         align-content: center;
         flex-wrap: nowrap;
         flex-direction: var(--dropdownMainButtonFlexDirection, row);
-        z-index: var(--dropdownListZIndex, 2);
+      }
+
+      .open button.click-main {
+        /* When the dropdown is open, give the buttom the same z-index
+           as the dropdown menu, so that it remains clickable despite
+           the backdrop. */
+        z-index: ${dropdownListZIndex};
       }
 
       button.click-main:disabled {
@@ -605,7 +612,7 @@ export class IaDropdown extends LitElement {
       }
 
       ul {
-        z-index: var(--dropdownListZIndex, 2);
+        z-index: ${dropdownListZIndex};
       }
 
       #dropdown-main.closed {

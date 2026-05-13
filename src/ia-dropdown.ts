@@ -478,6 +478,7 @@ export class IaDropdown extends LitElement {
     const dropdownSelectedBgColor = css`var(--dropdownSelectedBgColor, #fff)`;
     const dropdownMainButtonBgColor = css`var(--dropdownMainButtonBgColor, transparent)`;
     const dropdownTextAlign = css`var(--dropdownTextAlign, inherit)`;
+    const dropdownBackdropZIndex = css`var(--dropdownBackdropZIndex, 1)`;
     const dropdownListZIndex = css`var(--dropdownListZIndex, 2)`;
 
     return css`
@@ -608,7 +609,7 @@ export class IaDropdown extends LitElement {
         width: 100vw;
         height: 100vh;
         background-color: transparent;
-        z-index: 1;
+        z-index: ${dropdownBackdropZIndex};
       }
 
       ul {

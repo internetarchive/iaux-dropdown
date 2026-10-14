@@ -1,4 +1,4 @@
-![Build Status](https://github.com/internetarchive/iaux-typescript-wc-template/actions/workflows/ci.yml/badge.svg) [![codecov](https://codecov.io/gh/internetarchive/iaux-dropdown/branch/main/graph/badge.svg?token=NdHztWohpj)](https://codecov.io/gh/internetarchive/iaux-dropdown)
+[![Build Status](https://github.com/internetarchive/iaux-dropdown/actions/workflows/ci.yml/badge.svg)](https://github.com/internetarchive/iaux-dropdown/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/internetarchive/iaux-dropdown/branch/main/graph/badge.svg?token=NdHztWohpj)](https://codecov.io/gh/internetarchive/iaux-dropdown)
 # `<ia-dropdown>` web component
 
 <img src="ia-dropdown-ex.gif" style="width: 200px"/>

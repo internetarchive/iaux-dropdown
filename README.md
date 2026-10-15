@@ -156,6 +156,12 @@ CSS Vars
 - `var(--iconLabelGutterWidth, 10px)`
 - `var(--iconLabelFlexDirection, row)` (setting to `column` allows vertical layout)
 
+#### Using it alongside `@internetarchive/elements`
+
+`@internetarchive/elements` 1.3 and later has its own copies of `<ia-dropdown>` and `<ia-icon-label>`. When a page loads both, whichever copy registers first is used for every instance of the tag. The other skips its registration with a console warning instead of throwing.
+
+The two copies behave the same as of this package's 2.3.0 and elements 1.3, but they're separate code and can drift. Don't construct the exported classes (`new IaDropdown()`) or check `instanceof` against them, because the registered class may be the other copy's.
+
 ## Local Demo with `web-dev-server`
 ```bash
 yarn start

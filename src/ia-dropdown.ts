@@ -1,12 +1,8 @@
 import { html, css, LitElement, TemplateResult, PropertyValues } from 'lit';
-import {
-  property,
-  query,
-  customElement,
-  queryAssignedElements,
-} from 'lit/decorators.js';
+import { property, query, queryAssignedElements } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
+import { customElement } from './custom-element';
 import caretUp from './assets/icons/caret-up';
 import caretDown from './assets/icons/caret-down';
 

@@ -1,5 +1,5 @@
 import { html, css, LitElement, TemplateResult } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement } from './custom-element';
 
 @customElement('ia-icon-label')
 export class IaIconLabel extends LitElement {
